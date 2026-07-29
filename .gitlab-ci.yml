@@ -1,35 +1,17 @@
-# environment (Docker image) that has Maven and Java installed
-image: maven:3.9-eclipse-temurin-17
-
-
-cache:
-  paths:
-    - .m2/repository
-
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-
-
-# pipeline in chronological order
 stages:
   - build
   - test
 
-# build job
+# Build job voor Windows
 build-job:
   stage: build
   script:
-   - echo "Compiling the Mancala project..."
-   - mvn compile
-  #   - mvn package -Drevision="1.0.$CI_PIPELINE_IID" -DskipTests # met package voeren we automatisch ook comile uit, en met dskiptest doen we nu niet gelijk test maar pas in de volgende stap zoals hieronder staat (zonderdskiptest zou hij 2 keer testen doen want staat hieronder al
-  # artifacts:
-  #   paths:
-  #     - "**/target/*.jar"
-  #   expire_in: 1 week
+    - Write-Host "Compiling the Mancala project..."
+    - mvn compile
 
-# test job
+# Test job voor Windows
 test-job:
   stage: test
   script:
-    - echo "Running unit tests..."
+    - Write-Host "Running unit tests..."
     - mvn test
