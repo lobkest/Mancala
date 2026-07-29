@@ -19,7 +19,7 @@ stages:
 build-job:
   stage: build
   script:
-   - echo "Compiling the Bank project..."
+   - echo "Compiling the Mancala project..."
    - mvn compile
   #   - mvn package -Drevision="1.0.$CI_PIPELINE_IID" -DskipTests # met package voeren we automatisch ook comile uit, en met dskiptest doen we nu niet gelijk test maar pas in de volgende stap zoals hieronder staat (zonderdskiptest zou hij 2 keer testen doen want staat hieronder al
   # artifacts:
