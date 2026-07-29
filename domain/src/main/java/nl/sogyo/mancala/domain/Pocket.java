@@ -1,5 +1,7 @@
 package nl.sogyo.mancala.domain;
 
+import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
+
 public class Pocket {
     final int pocketNr;
     int stones;
@@ -8,18 +10,26 @@ public class Pocket {
     public Pocket() {
         this.pocketNr = 1;
         this.stones = 4;
-        this.nextPocket = new Pocket(this.pocketNr+1);
+        this.nextPocket = new Pocket(this.pocketNr + 1);
     }
 
     public Pocket(int pocketNr) {
         this.pocketNr = pocketNr;
         this.stones = 4;
-//        this.nextPocket = new Pocket(this.pocketNr+1);
+        if (pocketNr < 14) {
+            this.nextPocket = new Pocket(this.pocketNr + 1);
+        }
     }
 
-    public static void main(String[] args) {
+    public Pocket getPocketFinder(int i) {
+        if (this.pocketNr == i) {
+            return this;
+        }
 
-        System.out.println("Hello World!");
+        if (this.nextPocket == null) {
+            throw new OngeldigBordException();
+        }
 
+        return this.nextPocket.getPocketFinder(i);
     }
 }

@@ -1,9 +1,9 @@
 package nl.sogyo.mancala.domain;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 
 public class PocketTest {
 
@@ -29,6 +29,31 @@ public class PocketTest {
     public void testFirstPocketNextNr() {
         Pocket pocket = new Pocket();
         assertEquals(pocket.nextPocket.pocketNr, 2);
+    }
+
+    @Test
+    public void testLastPocketNr() {
+        Pocket pocket = new Pocket();
+        Pocket pocketFound = pocket.getPocketFinder(12);
+        int pocketNr = pocketFound.pocketNr;
+        assertEquals(pocketNr, 12);
+    }
+
+    @Test
+    public void testLastPocketStones() {
+        Pocket pocket = new Pocket();
+        Pocket pocketFound = pocket.getPocketFinder(12);
+        int stones = pocketFound.stones;
+        assertEquals(stones, 4);
+    }
+
+
+    @Test
+    public void testThirteenPocketsNotPossible() {
+        Pocket pocket = new Pocket();
+        assertThrows(OngeldigBordException.class, () -> {
+            pocket.getPocketFinder(15);
+        });
     }
 
 
