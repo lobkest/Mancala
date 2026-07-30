@@ -1,5 +1,6 @@
 package nl.sogyo.mancala.domain;
 
+import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,25 +15,25 @@ public class PocketTest {
     @Test
     public void testFirstPocketCreation() {
         Pocket pocket = new Pocket();
-        assertTrue(pocket != null);
+        assertNotNull(pocket);
     }
 
     @Test
     public void testFirstPocketNumber() {
         Pocket pocket = new Pocket();
-        assertEquals(pocket.pocketNr, 1);
+        assertEquals(1, pocket.pocketNr);
     }
 
     @Test
     public void testFirstPocketStones() {
         Pocket pocket = new Pocket();
-        assertEquals(pocket.stones, 4);
+        assertEquals(4, pocket.stones);
     }
 
     @Test
     public void testFirstPocketNextNr() {
         Pocket pocket = new Pocket();
-        assertEquals(pocket.nextPocket.pocketNr, 2);
+        assertEquals(2, pocket.nextPocket.pocketNr);
     }
 
     @ParameterizedTest
@@ -50,7 +51,7 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         PocketAbstract pocketFound = pocket.getPocketFinder(PocketNr);
         int stones = pocketFound.stones;
-        assertEquals(stones, 4);
+        assertEquals(4, stones);
     }
 
     @ParameterizedTest
@@ -62,7 +63,6 @@ public class PocketTest {
         assertEquals(pocketNr+1, pocketNrNext);
     }
 
-    // KIJKEN OF IK DIT WIL HOUDEN OF DAT HET OKE IS DAT HIJ 15 ROEPT EN DAN GEWOON 1 PAKT
     @Test
     public void testThirteenPocketsNotPossible() {
         Pocket pocket = new Pocket();
@@ -75,7 +75,7 @@ public class PocketTest {
     public void testLastPocketHasFirstPocketAsNext() {
         Pocket pocket = new Pocket();
         PocketAbstract pocketFound = pocket.getPocketFinder(14);
-        assertEquals(pocketFound.nextPocket.pocketNr, 1);
+        assertEquals(1, pocketFound.nextPocket.pocketNr);
     }
 
     @ParameterizedTest
@@ -83,7 +83,7 @@ public class PocketTest {
     public void testMancalaHasZeroStones(int pocketNrMancala){
         Pocket pocket = new Pocket();
         PocketAbstract pocketFound = pocket.getPocketFinder(pocketNrMancala);
-        assertEquals(pocketFound.stones, 0);
+        assertEquals(0, pocketFound.stones);
     }
 
     @Test
@@ -135,39 +135,39 @@ public class PocketTest {
 
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5, 6})
-    public void testPlayerOneCanPlayPocketOneToSix(int pocketnr){
+    public void testPlayerOneCanPlayPocketOneToSix(int pocketNr){
         Pocket pocket = new Pocket();
-        PocketAbstract FirstPocket = pocket.getPocketFinder(pocketnr);
-        boolean validMove = FirstPocket.canIDoMove();
+        PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
+        boolean validMove = PocketFound.canIDoMove();
         assertTrue(validMove);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {8, 9, 10, 11, 12, 13})
-    public void testPlayerOneCanNotPlayPocketEightToThirteen(int pocketnr){
+    public void testPlayerOneCanNotPlayPocketEightToThirteen(int pocketNr){
         Pocket pocket = new Pocket();
-        PocketAbstract FirstPocket = pocket.getPocketFinder(pocketnr);
-        boolean validMove = FirstPocket.canIDoMove();
+        PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
+        boolean validMove = PocketFound.canIDoMove();
         assertFalse(validMove);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {8, 9, 10, 11, 12, 13})
-    public void testPlayerTwoCanPlayPocketEightToThirteen(int pocketnr){
+    public void testPlayerTwoCanPlayPocketEightToThirteen(int pocketNr){
         Pocket pocket = new Pocket();
-        PocketAbstract FirstPocket = pocket.getPocketFinder(pocketnr);
-        FirstPocket.beurt.setChangeBeurt();
-        boolean validMove = FirstPocket.canIDoMove();
+        PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
+        PocketFound.beurt.setChangeBeurt();
+        boolean validMove = PocketFound.canIDoMove();
         assertTrue(validMove);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5, 6})
-    public void testPlayerTwoCanNotPlayPocketOneToSix(int pocketnr){
+    public void testPlayerTwoCanNotPlayPocketOneToSix(int pocketNr){
         Pocket pocket = new Pocket();
-        PocketAbstract FirstPocket = pocket.getPocketFinder(pocketnr);
-        FirstPocket.beurt.setChangeBeurt();
-        boolean validMove = FirstPocket.canIDoMove();
+        PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
+        PocketFound.beurt.setChangeBeurt();
+        boolean validMove = PocketFound.canIDoMove();
         assertFalse(validMove);
     }
 
@@ -175,8 +175,8 @@ public class PocketTest {
     @ValueSource(ints = {7, 14})
     public void testPlayerOneCanoNotPLayMancalas(int mancalaNr){
         Pocket pocket = new Pocket();
-        PocketAbstract FirstPocket = pocket.getPocketFinder(mancalaNr);
-        boolean validMove = FirstPocket.canIDoMove();
+        PocketAbstract PocketFound = pocket.getPocketFinder(mancalaNr);
+        boolean validMove = PocketFound.canIDoMove();
         assertFalse(validMove);
     }
 
@@ -184,13 +184,95 @@ public class PocketTest {
     @ValueSource(ints = {7, 14})
     public void testPlayerTwoCanoNotPLayMancalas(int mancalaNr){
         Pocket pocket = new Pocket();
-        PocketAbstract FirstPocket = pocket.getPocketFinder(mancalaNr);
-        FirstPocket.beurt.setChangeBeurt();
-        boolean validMove = FirstPocket.canIDoMove();
+        PocketAbstract PocketFound = pocket.getPocketFinder(mancalaNr);
+        PocketFound.beurt.setChangeBeurt();
+        boolean validMove = PocketFound.canIDoMove();
         assertFalse(validMove);
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {7, 14})
+    public void testPlayerTwoCanoNotMoveStonesOfMancalas(int mancalaNr){
+        Pocket pocket = new Pocket();
+        PocketAbstract PocketFound = pocket.getPocketFinder(mancalaNr);
+        PocketFound.beurt.setChangeBeurt();
+        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+    }
 
+    @ParameterizedTest
+    @ValueSource(ints = {7, 14})
+    public void testPlayerOneCanoNotMoveStonesOfMancalas(int mancalaNr){
+        Pocket pocket = new Pocket();
+        PocketAbstract PocketFound = pocket.getPocketFinder(mancalaNr);
+        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+    }
 
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6})
+    public void testPlayerTwoCanNotMoveStonesFromPocketOneToSix(int pocketNr){
+        Pocket pocket = new Pocket();
+        PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
+        PocketFound.beurt.setChangeBeurt();
+        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+    }
 
+    @ParameterizedTest
+    @ValueSource(ints = {8, 9, 10, 11, 12, 13})
+    public void testPlayerOneCanNotMoveStonesFromPocketEightToThirteen(int pocketNr){
+        Pocket pocket = new Pocket();
+        PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
+        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14})
+    public void testBeurtIfSwitchedInPocketOne(int pocketNr){
+        Pocket pocket = new Pocket();
+        PocketAbstract PocketOne = pocket.getPocketFinder(1);
+        PocketOne.beurt.setChangeBeurt();
+        PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
+        assertEquals(2, PocketFound.beurt.getWhichPlayerIsNow());
+    }
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14})
+    public void testBeurtIfSwitchedInPocketEight(int pocketNr){
+        Pocket pocket = new Pocket();
+        PocketAbstract PocketOne = pocket.getPocketFinder(8);
+        PocketOne.beurt.setChangeBeurt();
+        PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
+        assertEquals(2, PocketFound.beurt.getWhichPlayerIsNow());
+    }
+
+    @Test
+    public void testLastStoneInOwnEmptyPocketMeansGettingThemToMancalaPlusNeighbor(){
+        Pocket pocket = new Pocket();
+        PocketAbstract PocketSix = pocket.getPocketFinder(6);
+        PocketSix.setMoveStones();
+        PocketSix.beurt.setChangeBeurt();
+        PocketAbstract PocketTwo = pocket.getPocketFinder(2);
+        PocketTwo.setMoveStones();
+
+        assertEquals(0, PocketSix.stones);
+        PocketAbstract PocketMancalaSeven = pocket.getPocketFinder(7);
+        assertEquals(7, PocketMancalaSeven.stones);
+        PocketAbstract PocketMancalaEight = pocket.getPocketFinder(8);
+        assertEquals(0, PocketMancalaEight.stones);
+    }
+
+    @Test
+    public void testLastStoneInOwnEmptyPocketMeansGettingThemToMancalaPlusNeighborForPlayerTwo(){
+        Pocket pocket = new Pocket();
+        pocket.beurt.setChangeBeurt();
+        PocketAbstract PocketTwelve = pocket.getPocketFinder(12);
+        PocketTwelve.setMoveStones();
+        PocketTwelve.beurt.setChangeBeurt();
+        PocketAbstract PocketEight = pocket.getPocketFinder(8);
+        PocketEight.setMoveStones();
+
+        assertEquals(0, PocketTwelve.stones);
+        PocketAbstract PocketMancalaFourteen = pocket.getPocketFinder(14);
+        assertEquals(7, PocketMancalaFourteen.stones);
+        PocketAbstract PocketMancalaTwo = pocket.getPocketFinder(2);
+        assertEquals(0, PocketMancalaTwo.stones);
+    }
 }

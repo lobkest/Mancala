@@ -1,6 +1,7 @@
 package nl.sogyo.mancala.domain;
 
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
+import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 public class Pocket extends PocketAbstract {
 
@@ -9,7 +10,7 @@ public class Pocket extends PocketAbstract {
     }
 
     protected Pocket(int pocketNr, PocketAbstract firstPocket, Beurt beurt) {
-        super(pocketNr, firstPocket, beurt);
+        super(pocketNr, beurt);
         this.stones = 4;
         this.nextPocket = createNextPocket(pocketNr + 1, firstPocket, beurt);
     }
@@ -24,10 +25,10 @@ public class Pocket extends PocketAbstract {
     @Override
     public void setMoveStones() {
         if (!canIDoMove() || this.stones == 0) {
-            return; // Mag niet spelen of vakje is leeg
+            throw new CanNotPlayThisPocket();
         }
         int stonesToPass = this.stones;
-        this.stones = 0;
+        setStones(0);
         this.nextPocket.receiveStones(stonesToPass);
     }
 
@@ -38,8 +39,43 @@ public class Pocket extends PocketAbstract {
 
         if (stonesPassedOn > 0) {
             this.nextPocket.receiveStones(stonesPassedOn);
-        } else {
+        } else if (this.stones == 1){
+            // get all stones to own mancala and that of neighbor
+            this.setStones(0);
+
+            PocketAbstract neighborPocket = findNeighborPocket(this.pocketNr);
+            PocketAbstract mancalaOwn = findMyMancala(this.beurt.getWhichPlayerIsNow());
+
+            int neighborPocketStonesAmount = neighborPocket.getStonesAmount();
+
+            mancalaOwn.setAddStones(neighborPocketStonesAmount);
+            mancalaOwn.setAddStones(1);
+
+            neighborPocket.setStones(0);
+
+            this.beurt.setChangeBeurt();
+        }
+        else{
             this.beurt.setChangeBeurt();
         }
     }
+
+    private PocketAbstract findNeighborPocket(int pocketNr) {
+        if (pocketNr == 7 || pocketNr == 14) {
+            throw new OngeldigBordException();
+        }
+//        int pocketNrNeighbor = 14 - pocketNr + 14 * ((pocketNr - 1) / 7);
+        int pocketNrNeighbor = 14 - pocketNr;
+        return this.getPocketFinder(pocketNrNeighbor);
+    }
+
+    private PocketAbstract findMyMancala(int currentPlayer) {
+        if (currentPlayer==1){
+            return this.getPocketFinder(7);
+        }
+        else{
+            return this.getPocketFinder(14);
+        }
+    }
+
 }

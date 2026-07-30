@@ -1,10 +1,12 @@
 
 package nl.sogyo.mancala.domain;
 
+import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
+
 public class MancalaPocket extends PocketAbstract  {
 
     protected MancalaPocket(int pocketNr, PocketAbstract firstPocket, Beurt beurt) {
-        super(pocketNr, firstPocket, beurt);
+        super(pocketNr, beurt);
         this.stones = 0;
         this.nextPocket = createNextPocket(pocketNr + 1, firstPocket, beurt);
     }
@@ -16,6 +18,7 @@ public class MancalaPocket extends PocketAbstract  {
 
     @Override
     public void setMoveStones() {
+        throw new CanNotPlayThisPocket();
     }
 
     @Override
@@ -32,10 +35,10 @@ public class MancalaPocket extends PocketAbstract  {
             if (stonesPassedOn > 0) {
                 this.nextPocket.receiveStones(stonesPassedOn);
             } else {
-                // Regel: Laatste steen in EIGEN Mancala? Extra beurt! (beurt NIET wisselen)
+                // jij bent nog een keer
             }
         } else {
-            // Niet jouw Mancala? Sla deze over en geef direct door aan het volgende vakje
+            // sla andermans mancala over
             this.nextPocket.receiveStones(stonesPassedOn);
         }
     }

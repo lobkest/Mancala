@@ -15,7 +15,7 @@ public abstract class PocketAbstract {
         this.nextPocket = createNextPocket(2, this, this.beurt);
     }
 
-    protected PocketAbstract(int pocketNr, PocketAbstract firstPocket, Beurt beurt) {
+    protected PocketAbstract(int pocketNr, Beurt beurt) {
         this.pocketNr = pocketNr;
         this.beurt = beurt;
     }
@@ -34,37 +34,35 @@ public abstract class PocketAbstract {
     }
 
     public PocketAbstract getPocketFinder(int i) {
+        return getPocketFinder(i, this);
+    }
+
+    private PocketAbstract getPocketFinder(int i, PocketAbstract startPocket) {
         if (this.pocketNr == i) {
             return this;
         }
-        if (this.nextPocket.pocketNr == 1) {
+        // If we've looped all the way back to where we started searching, the pocket doesn't exist
+        if (this.nextPocket == startPocket) {
             throw new OngeldigBordException();
         }
-        return this.nextPocket.getPocketFinder(i);
+        return this.nextPocket.getPocketFinder(i, startPocket);
+    }
+
+    protected void setStones(int amount) {
+        this.stones = amount;
+    }
+
+    protected int getStonesAmount(){
+        return this.stones;
+    }
+
+    protected void setAddStones(int amount){
+        this.stones += amount;
     }
 
     public abstract boolean canIDoMove();
     public abstract void setMoveStones();
     protected abstract void receiveStones(int stonesPassedOn);
 
-//
-//    public void SetMoveStones() {
-//        int stonesPassedOn = this.stones;
-//        this.stones = 0;
-//        this.nextPocket.SetMoveStones(stonesPassedOn);
-//    }
-//
-//    private void SetMoveStones(int stonesPassedOn) {
-//        stonesPassedOn -= 1;
-//        this.stones += 1;
-//        if (stonesPassedOn >= 1){
-//            this.nextPocket.SetMoveStones(stonesPassedOn);
-//        }
-//    }
-//
-//    public boolean CanIDoMove() {
-//        int whoseTurnNow = this.beurt.getWhichPlayerIsNow();
-//        return (this.pocketNr > 7 && whoseTurnNow == 2) ||
-//                (this.pocketNr < 8 && whoseTurnNow == 1);
-//    }
+
 }
