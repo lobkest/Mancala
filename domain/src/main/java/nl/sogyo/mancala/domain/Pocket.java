@@ -2,6 +2,7 @@ package nl.sogyo.mancala.domain;
 
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
+import nl.sogyo.mancala.domain.exceptions.GameOver;
 
 public class Pocket extends PocketAbstract {
 
@@ -18,12 +19,19 @@ public class Pocket extends PocketAbstract {
     @Override
     public boolean canIDoMove() {
         int whoseTurnNow = this.beurt.getWhichPlayerIsNow();
+        if (whoseTurnNow == 0){
+            throw new GameOver();
+        }
         return (this.pocketNr < 7 && whoseTurnNow == 1) ||
                 (this.pocketNr > 7 && this.pocketNr < 14 && whoseTurnNow == 2);
     }
 
     @Override
     public void setMoveStones() {
+
+        if (this.stones == 0){
+            this.determineIfGameIsOver();
+        }
         if (!canIDoMove() || this.stones == 0) {
             throw new CanNotPlayThisPocket();
         }
@@ -39,8 +47,15 @@ public class Pocket extends PocketAbstract {
 
         if (stonesPassedOn > 0) {
             this.nextPocket.receiveStones(stonesPassedOn);
-        } else if (this.stones == 1){
-            // get all stones to own mancala and that of neighbor
+        } else {
+            lastStoneInPocket();
+            this.beurt.setChangeBeurt();
+        }
+
+    }
+
+    private void lastStoneInPocket() {
+        if (this.stones == 1) {
             this.setStones(0);
 
             PocketAbstract neighborPocket = findNeighborPocket(this.pocketNr);
@@ -52,11 +67,6 @@ public class Pocket extends PocketAbstract {
             mancalaOwn.setAddStones(1);
 
             neighborPocket.setStones(0);
-
-            this.beurt.setChangeBeurt();
-        }
-        else{
-            this.beurt.setChangeBeurt();
         }
     }
 
@@ -76,6 +86,18 @@ public class Pocket extends PocketAbstract {
         else{
             return this.getPocketFinder(14);
         }
+    }
+
+    @Override
+    protected int getSideStonesCount() {
+        return this.stones + this.nextPocket.getSideStonesCount();
+    }
+
+    @Override
+    protected int clearSideStones() {
+        int count = this.stones;
+        this.stones = 0;
+        return count + this.nextPocket.clearSideStones();
     }
 
 }

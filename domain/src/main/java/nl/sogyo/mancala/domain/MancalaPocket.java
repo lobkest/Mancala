@@ -42,4 +42,14 @@ public class MancalaPocket extends PocketAbstract  {
             this.nextPocket.receiveStones(stonesPassedOn);
         }
     }
+
+    @Override
+    protected int getSideStonesCount() {
+        return 0; // Mancala pockets do not count as standard side pockets
+    }
+
+    @Override
+    protected int clearSideStones() {
+        return 0; // Mancala pocket stores points; it is not cleared
+    }
 }
