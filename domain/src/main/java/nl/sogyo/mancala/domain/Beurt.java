@@ -25,9 +25,9 @@ public class Beurt {
     }
 
     // only for the tests, never to be used for interface
-    protected void setPlayerToNumber(int playerNr){
-        this.beurtPlayer = playerNr;
-    }
+//    protected void setPlayerToNumber(int playerNr){
+//        this.beurtPlayer = playerNr;
+//    }
 
     protected void setGameOver(){
         this.beurtPlayer = 0;

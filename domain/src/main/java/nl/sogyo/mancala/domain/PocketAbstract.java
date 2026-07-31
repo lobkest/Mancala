@@ -14,7 +14,6 @@ public abstract class PocketAbstract {
         this.stones = 4;
         this.beurt = new Beurt();
         this.owner = 1;
-//        this.nextPocket = createNextPocket(2, this, this.beurt);
     }
 
     protected PocketAbstract(int pocketNr, Beurt beurt, int owner) {
@@ -23,23 +22,23 @@ public abstract class PocketAbstract {
         this.owner = owner;
     }
 
-//    protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt) {
-//        if (nextNr == 7 || nextNr == 14) {
-//            return new MancalaPocket(nextNr, firstPocket, beurt);
-//        } else if (nextNr < 14) {
-//            return new Pocket(nextNr, firstPocket, beurt);
-//        } else if (nextNr == 15){
-//            return firstPocket;
-//        }
-//        else{
-//            throw new OngeldigBordException();
-//        }
-//    }
-
     protected abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt, int owner);
 
     public PocketAbstract getPocketFinder(int i) {
         return getPocketFinder(i, this);
+    }
+
+//    protected void receiveStones(int stonesPassedOn) {
+//        boolean isMyTurn = this.beurt.isTurnOf(this.owner);
+//        if (isMyTurn) {
+//            depositStoneAndPass(stonesPassedOn);
+//        } else {
+//            this.nextPocket.receiveStones(stonesPassedOn);
+//        }
+//    }
+
+    protected void receiveStones(int stonesPassedOn) {
+        depositStoneAndPass(stonesPassedOn);
     }
 
     protected abstract void passRemainingStones(int remainingStones);
@@ -55,7 +54,6 @@ public abstract class PocketAbstract {
         if (this.pocketNr == i) {
             return this;
         }
-        // If we've looped all the way back to where we started searching, the pocket doesn't exist
         if (this.nextPocket == startPocket) {
             throw new OngeldigBordException();
         }
@@ -72,7 +70,6 @@ public abstract class PocketAbstract {
         if (playerOneEmpty || playerTwoEmpty) {
             gameFinished(playerOneStart, playerTwoStart);
         }
-
     }
 
     private void gameFinished(PocketAbstract playerOneStart, PocketAbstract playerTwoStart) {
@@ -98,9 +95,8 @@ public abstract class PocketAbstract {
         this.stones += amount;
     }
 
-    public abstract boolean canIDoMove();
     public abstract void setMoveStones();
-    protected abstract void receiveStones(int stonesPassedOn);
+//    protected abstract void receiveStones(int stonesPassedOn);
 
     protected abstract int getSideStonesCount();
     protected abstract int clearSideStones();
