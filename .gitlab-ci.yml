@@ -25,7 +25,7 @@ test:
   script:
     - mvn test
   artifacts:
-  when: always
-  reports:
-    junit:
-      - "**/target/surefire-reports/TEST-*.xml"
+    when: always
+    reports:
+      junit:
+        - "**/target/surefire-reports/TEST-*.xml"
