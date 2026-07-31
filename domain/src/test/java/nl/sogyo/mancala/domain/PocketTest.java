@@ -1,7 +1,6 @@
 package nl.sogyo.mancala.domain;
 
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
-import nl.sogyo.mancala.domain.exceptions.GameOver;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -339,30 +338,123 @@ public class PocketTest {
     }
 
 
-//    @Test
-//    public void testGameOverWhenPlayerOnePocketsAreEmptySoICanNotMakeMove(){
-//        Pocket pocket = new Pocket();
-//        PocketAbstract PocketOne = pocket.getPocketFinder(1);
-//        PocketAbstract PocketTwo = pocket.getPocketFinder(2);
-//        PocketAbstract PocketThree = pocket.getPocketFinder(3);
-//        PocketAbstract PocketFour = pocket.getPocketFinder(4);
-//        PocketAbstract PocketFive = pocket.getPocketFinder(5);
-//        PocketAbstract PocketSix = pocket.getPocketFinder(6);
-//        PocketAbstract PocketSeven = pocket.getPocketFinder(7);
-//
-//        PocketOne.setStones(0);
-//        PocketTwo.setStones(0);
-//        PocketThree.setStones(0);
-//        PocketFour.setStones(0);
-//        PocketFive.setStones(0);
-//        PocketSix.setStones(0);
-//
-//        PocketOne.beurt.setPlayerToNumber(2);
-//
-////        PocketSeven.setMoveStones();
-//          assertTrue(PocketFound.beurt.isTurnOf(0));
+    @Test
+    public void testGameOverWhenPlayerOnePocketsAreEmptySoICanNotMakeMoveAndBeurtIsZero(){
+        Pocket pocket = new Pocket();
+        PocketAbstract PocketOne = pocket.getPocketFinder(1);
+        PocketAbstract PocketTwo = pocket.getPocketFinder(2);
+        PocketAbstract PocketThree = pocket.getPocketFinder(3);
+        PocketAbstract PocketFour = pocket.getPocketFinder(4);
+        PocketAbstract PocketFive = pocket.getPocketFinder(5);
+        PocketAbstract PocketSix = pocket.getPocketFinder(6);
 
-//
-//        assertThrows(GameOver.class, PocketSeven::setMoveStones);
-//    }
+        PocketAbstract PocketEight = pocket.getPocketFinder(8);
+
+        PocketOne.setStones(0);
+        PocketTwo.setStones(0);
+        PocketThree.setStones(0);
+        PocketFour.setStones(0);
+        PocketFive.setStones(0);
+        PocketSix.setStones(0);
+
+        PocketEight.setMoveStones();
+
+        assertTrue(PocketSix.beurt.isTurnOf(0));
+    }
+
+    @Test
+    public void testGameOverWhenPlayerOnePocketsAreEmptyThenICanFindWinner(){
+        Pocket pocket = new Pocket();
+        PocketAbstract PocketOne = pocket.getPocketFinder(1);
+        PocketAbstract PocketTwo = pocket.getPocketFinder(2);
+        PocketAbstract PocketThree = pocket.getPocketFinder(3);
+        PocketAbstract PocketFour = pocket.getPocketFinder(4);
+        PocketAbstract PocketFive = pocket.getPocketFinder(5);
+        PocketAbstract PocketSix = pocket.getPocketFinder(6);
+
+        PocketAbstract PocketEight = pocket.getPocketFinder(8);
+
+        PocketOne.setStones(0);
+        PocketTwo.setStones(0);
+        PocketThree.setStones(0);
+        PocketFour.setStones(0);
+        PocketFive.setStones(0);
+        PocketSix.setStones(0);
+
+        PocketEight.setMoveStones();
+
+        assertEquals(2, pocket.getWhoIsTheWinner());
+    }
+
+    @Test
+    public void testGameOverDrawPossible(){
+        Pocket pocket = new Pocket();
+
+        PocketAbstract mancalaOne = pocket.getPocketFinder(7);
+        PocketAbstract mancalaTwo = pocket.getPocketFinder(14);
+        mancalaOne.setStones(24);
+        mancalaTwo.setStones(24);
+
+        for (int i = 1; i <= 6; i++) {
+            PocketAbstract currentPocket = pocket.getPocketFinder(i);
+            currentPocket.setStones(0);
+        }
+
+        for (int i = 8; i <= 13; i++) {
+            PocketAbstract currentPocket = pocket.getPocketFinder(i);
+            currentPocket.setStones(0);
+        }
+
+        pocket.setMoveStones();
+
+        assertEquals(0, pocket.getWhoIsTheWinner());
+    }
+
+    @Test
+    public void testGameOverPlayerOneWon(){
+        Pocket pocket = new Pocket();
+
+        PocketAbstract mancalaOne = pocket.getPocketFinder(7);
+        PocketAbstract mancalaTwo = pocket.getPocketFinder(14);
+        mancalaOne.setStones(22);
+        mancalaTwo.setStones(2);
+
+        for (int i = 1; i <= 6; i++) {
+            PocketAbstract currentPocket = pocket.getPocketFinder(i);
+            currentPocket.setStones(2);
+        }
+
+        for (int i = 8; i <= 13; i++) {
+            PocketAbstract currentPocket = pocket.getPocketFinder(i);
+            currentPocket.setStones(0);
+        }
+
+        pocket.setMoveStones();
+
+        assertEquals(1, pocket.getWhoIsTheWinner());
+    }
+
+    @Test
+    public void testGameOverPlayerTwoWon(){
+        Pocket pocket = new Pocket();
+
+        PocketAbstract mancalaOne = pocket.getPocketFinder(7);
+        PocketAbstract mancalaTwo = pocket.getPocketFinder(14);
+        mancalaOne.setStones(2);
+        mancalaTwo.setStones(24);
+
+        for (int i = 1; i <= 6; i++) {
+            PocketAbstract currentPocket = pocket.getPocketFinder(i);
+            currentPocket.setStones(0);
+        }
+
+        for (int i = 8; i <= 13; i++) {
+            PocketAbstract currentPocket = pocket.getPocketFinder(i);
+            currentPocket.setStones(2);
+        }
+
+        pocket.setMoveStones();
+
+        assertEquals(2, pocket.getWhoIsTheWinner());
+    }
 }

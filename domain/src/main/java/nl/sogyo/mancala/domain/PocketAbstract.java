@@ -1,6 +1,7 @@
 package nl.sogyo.mancala.domain;
 
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
+import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 public abstract class PocketAbstract {
     protected final int pocketNr;
@@ -24,18 +25,9 @@ public abstract class PocketAbstract {
 
     protected abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt, int owner);
 
-    public PocketAbstract getPocketFinder(int i) {
+    protected PocketAbstract getPocketFinder(int i) {
         return getPocketFinder(i, this);
     }
-
-//    protected void receiveStones(int stonesPassedOn) {
-//        boolean isMyTurn = this.beurt.isTurnOf(this.owner);
-//        if (isMyTurn) {
-//            depositStoneAndPass(stonesPassedOn);
-//        } else {
-//            this.nextPocket.receiveStones(stonesPassedOn);
-//        }
-//    }
 
     protected void receiveStones(int stonesPassedOn) {
         depositStoneAndPass(stonesPassedOn);
@@ -60,7 +52,7 @@ public abstract class PocketAbstract {
         return this.nextPocket.getPocketFinder(i, startPocket);
     }
 
-    public void determineIfGameIsOver() {
+    protected void determineIfGameIsOver() {
         PocketAbstract playerOneStart = getPocketFinder(1);
         PocketAbstract playerTwoStart = getPocketFinder(8);
 
@@ -85,6 +77,26 @@ public abstract class PocketAbstract {
         mancalaOne.beurt.setGameOver();
     }
 
+    public int getWhoIsTheWinner(){
+        if (this.beurt.getWhichPlayerIsNow() == 0) {
+            int scorePlayerOne = getWhatIsTheScore(1);
+            int scorePlayerTwo = getWhatIsTheScore(2);
+            return (scorePlayerOne > scorePlayerTwo) ? 1 : (scorePlayerTwo > scorePlayerOne) ? 2 : 0;
+        }
+        return -1;
+    }
+
+    private int getWhatIsTheScore(int playerNr){
+        int findpocket = 0;
+        if (playerNr == 1){
+            findpocket = 7;
+        }
+        else{
+            findpocket = 14;
+        }
+        return getPocketFinder(findpocket).getStonesAmount();
+    }
+
     protected void setStones(int amount) {
         this.stones = amount;
     }
@@ -96,8 +108,8 @@ public abstract class PocketAbstract {
     }
 
     public abstract void setMoveStones();
-//    protected abstract void receiveStones(int stonesPassedOn);
 
     protected abstract int getSideStonesCount();
     protected abstract int clearSideStones();
+    protected abstract PocketAbstract findNeighborPocket(int pocketNr);
 }

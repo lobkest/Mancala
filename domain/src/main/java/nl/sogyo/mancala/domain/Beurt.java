@@ -13,11 +13,7 @@ public class Beurt {
     }
 
     protected void setChangeBeurt(){
-        if (this.beurtPlayer == 1) {
-            this.beurtPlayer = 2;
-        } else {
-            this.beurtPlayer = 1;
-        }
+        this.beurtPlayer = 3 - this.beurtPlayer;
     }
 
     public boolean isTurnOf(int player) {

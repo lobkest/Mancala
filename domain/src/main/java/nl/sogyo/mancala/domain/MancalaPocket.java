@@ -1,6 +1,7 @@
 
 package nl.sogyo.mancala.domain;
 
+import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 public class MancalaPocket extends PocketAbstract  {
@@ -25,37 +26,11 @@ public class MancalaPocket extends PocketAbstract  {
         throw new CanNotPlayThisPocket();
     }
 
-//    @Override
-//    protected void receiveStones(int stonesPassedOn) {
-//        boolean isMyTurn = this.beurt.isTurnOf(this.owner);
-//        if (isMyTurn) {
-//            depositStoneAndPass(stonesPassedOn);
-//        } else {
-//            this.nextPocket.receiveStones(stonesPassedOn);
-//        }
-//    }
-
-//    @Override
-//    protected void passRemainingStones(int remainingStones) {
-//        if (remainingStones == 0) {
-//            return; // this player can go again
-//        }
-//        this.nextPocket.receiveStones(remainingStones);
-//    }
-
-//    @Override
-//    protected boolean canReceiveStones() {
-//        return this.beurt.isTurnOf(this.owner); // Alleen als het mijn turn is
-//    }
-
     @Override
     protected void passRemainingStones(int remainingStones) {
         if (remainingStones > 0) {
             this.nextPocket.receiveStones(remainingStones);
         }
-//        else {
-//            // 0 stenen over in eigen Mancala = nog een keer aan de beurt (beurt niet wisselen!)
-//        }
     }
 
     @Override
@@ -65,6 +40,12 @@ public class MancalaPocket extends PocketAbstract  {
         } else {
             this.nextPocket.receiveStones(stonesPassedOn); // Sla tegenstanders Mancala over
         }
+    }
+
+    // In MancalaPocket.java:
+    @Override
+    protected PocketAbstract findNeighborPocket(int pocketNr) {
+        throw new OngeldigBordException();
     }
 
     @Override

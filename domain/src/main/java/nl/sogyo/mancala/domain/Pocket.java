@@ -2,7 +2,6 @@ package nl.sogyo.mancala.domain;
 
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
-import nl.sogyo.mancala.domain.exceptions.GameOver;
 
 public class Pocket extends PocketAbstract {
 
@@ -19,11 +18,6 @@ public class Pocket extends PocketAbstract {
 
     @Override
     protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt, int owner){
-//        if (nextNr != 7 && nextNr != 14){
-//            return new Pocket(nextNr, firstPocket, beurt);
-//        }else{
-//            return new MancalaPocket(nextNr, firstPocket, beurt);
-//        }
         return switch (nextNr) {
             case 7, 14 -> new MancalaPocket(nextNr, firstPocket, beurt, owner);
             default    -> new Pocket(nextNr, firstPocket, beurt, owner);
@@ -32,14 +26,15 @@ public class Pocket extends PocketAbstract {
 
     @Override
     public void setMoveStones() {
-        boolean isMyTurn = this.beurt.isTurnOf(this.owner);
-//        if (isMyTurn){
-//            depositStoneAndPass(this.stones);
-//        }
-        if (this.stones == 0){
-            this.determineIfGameIsOver();
+        determineIfGameIsOver();
+
+        if (this.beurt.getWhichPlayerIsNow() == 0){
+            return;
         }
-        if (!isMyTurn || this.stones == 0) {
+
+        boolean canPlay = this.beurt.isTurnOf(this.owner) && this.stones > 0;
+
+        if (!canPlay) {
             throw new CanNotPlayThisPocket();
         }
 
@@ -47,14 +42,6 @@ public class Pocket extends PocketAbstract {
         setStones(0);
         this.nextPocket.receiveStones(stonesToPass);
     }
-
-//    @Override
-//    protected void passRemainingStones(int remainingStones) {
-//        if (remainingStones == 0) {
-//            this.beurt.setChangeBeurt();
-//        }
-//        this.nextPocket.receiveStones(remainingStones);
-//    }
 
     @Override
     protected void passRemainingStones(int remainingStones) {
@@ -65,19 +52,6 @@ public class Pocket extends PocketAbstract {
             this.beurt.setChangeBeurt(); // beurt wisselt
         }
     }
-
-//    @Override
-//    protected void receiveStones(int stonesPassedOn) {
-//        stonesPassedOn--;
-//        this.stones++;
-//
-//        if (stonesPassedOn > 0) {
-//            this.nextPocket.receiveStones(stonesPassedOn);
-//        } else {
-//            lastStoneInPocket();
-//            this.beurt.setChangeBeurt();
-//        }
-//    }
 
     private void lastStoneInPocket() {
         boolean isMyTurn = this.beurt.isTurnOf(this.owner);
@@ -96,23 +70,10 @@ public class Pocket extends PocketAbstract {
         }
     }
 
-    private PocketAbstract findNeighborPocket(int pocketNr) {
-        if (pocketNr == 7 || pocketNr == 14) {
-            throw new OngeldigBordException();
-        }
-//        int pocketNrNeighbor = 14 - pocketNr + 14 * ((pocketNr - 1) / 7);
-        int pocketNrNeighbor = 14 - pocketNr;
-        return this.getPocketFinder(pocketNrNeighbor);
+    @Override
+    protected PocketAbstract findNeighborPocket(int pocketNr) {
+        return this.getPocketFinder(14 - pocketNr);
     }
-
-//    private PocketAbstract findMyMancala(int currentPlayer) {
-//        if (currentPlayer==1){
-//            return this.getPocketFinder(7);
-//        }
-//        else{
-//            return this.getPocketFinder(14);
-//        }
-//    }
 
     private PocketAbstract findMyMancala() {
         int targetMancalaNr = (this.owner == 1) ? 7 : 14;
