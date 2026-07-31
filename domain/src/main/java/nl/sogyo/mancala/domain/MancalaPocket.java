@@ -5,10 +5,19 @@ import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 public class MancalaPocket extends PocketAbstract  {
 
-    protected MancalaPocket(int pocketNr, PocketAbstract firstPocket, Beurt beurt) {
-        super(pocketNr, beurt);
+    protected MancalaPocket(int pocketNr, PocketAbstract firstPocket, Beurt beurt, int owner) {
+        super(pocketNr, beurt, owner);
         this.stones = 0;
-        this.nextPocket = createNextPocket(pocketNr + 1, firstPocket, beurt);
+        this.nextPocket = createNextPocket(pocketNr + 1, firstPocket, beurt, owner);
+    }
+
+    @Override
+    protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt, int owner){
+        owner = owner+1;
+        return switch (nextNr) {
+            case 15 -> firstPocket;
+            default -> new Pocket(nextNr, firstPocket, beurt, owner);
+        };
     }
 
     @Override
@@ -23,24 +32,23 @@ public class MancalaPocket extends PocketAbstract  {
 
     @Override
     protected void receiveStones(int stonesPassedOn) {
-        int whoseTurnNow = this.beurt.getWhichPlayerIsNow();
-
-        boolean isMyMancala = (this.pocketNr == 7 && whoseTurnNow == 1) ||
-                (this.pocketNr == 14 && whoseTurnNow == 2);
-
-        if (isMyMancala) {
-            stonesPassedOn--;
-            this.stones++;
-
-            if (stonesPassedOn > 0) {
-                this.nextPocket.receiveStones(stonesPassedOn);
-            } else {
-                // jij bent nog een keer
-            }
+        boolean isMyTurn = this.beurt.isTurnOf(this.owner);
+        if (isMyTurn) {
+            depositStoneAndPass(stonesPassedOn); // wat is verschil tussen this.methodeInAbstract en zonder this.?
         } else {
-            // sla andermans mancala over
             this.nextPocket.receiveStones(stonesPassedOn);
         }
+    }
+
+    @Override
+    protected void passRemainingStones(int remainingStones) {
+        if (remainingStones == 0) {
+            return; // this player can go again
+        }
+        else{
+            this.nextPocket.receiveStones(remainingStones);
+        }
+
     }
 
     @Override

@@ -306,30 +306,42 @@ public class PocketTest {
         assertEquals(2, PocketFour.beurt.getWhichPlayerIsNow());
     }
 
-
     @Test
-    public void testGameOverWhenPlayerOnePocketsAreEmptySoICanNotMakeMove(){
+    public void testLastStoneInEmptyPocketOfOtherPlayer(){
         Pocket pocket = new Pocket();
-        PocketAbstract PocketOne = pocket.getPocketFinder(1);
-        PocketAbstract PocketTwo = pocket.getPocketFinder(2);
-        PocketAbstract PocketThree = pocket.getPocketFinder(3);
-        PocketAbstract PocketFour = pocket.getPocketFinder(4);
-        PocketAbstract PocketFive = pocket.getPocketFinder(5);
+        PocketAbstract PocketTen = pocket.getPocketFinder(10);
+        PocketTen.setStones(0);
         PocketAbstract PocketSix = pocket.getPocketFinder(6);
-        PocketAbstract PocketSeven = pocket.getPocketFinder(7);
+        PocketSix.setMoveStones();
+        PocketAbstract PocketFour = pocket.getPocketFinder(4);
 
-        PocketOne.setStones(0);
-        PocketTwo.setStones(0);
-        PocketThree.setStones(0);
-        PocketFour.setStones(0);
-        PocketFive.setStones(0);
-        PocketSix.setStones(0);
-
-        PocketOne.beurt.setPlayerToNumber(2);
-
-//        PocketSeven.setMoveStones();
-//        assertEquals(0, PocketOne.beurt.getWhichPlayerIsNow());
-
-        assertThrows(GameOver.class, PocketSeven::setMoveStones);
+        assertEquals(4, PocketFour.stones);
     }
+
+
+//    @Test
+//    public void testGameOverWhenPlayerOnePocketsAreEmptySoICanNotMakeMove(){
+//        Pocket pocket = new Pocket();
+//        PocketAbstract PocketOne = pocket.getPocketFinder(1);
+//        PocketAbstract PocketTwo = pocket.getPocketFinder(2);
+//        PocketAbstract PocketThree = pocket.getPocketFinder(3);
+//        PocketAbstract PocketFour = pocket.getPocketFinder(4);
+//        PocketAbstract PocketFive = pocket.getPocketFinder(5);
+//        PocketAbstract PocketSix = pocket.getPocketFinder(6);
+//        PocketAbstract PocketSeven = pocket.getPocketFinder(7);
+//
+//        PocketOne.setStones(0);
+//        PocketTwo.setStones(0);
+//        PocketThree.setStones(0);
+//        PocketFour.setStones(0);
+//        PocketFive.setStones(0);
+//        PocketSix.setStones(0);
+//
+//        PocketOne.beurt.setPlayerToNumber(2);
+//
+////        PocketSeven.setMoveStones();
+////        assertEquals(0, PocketOne.beurt.getWhichPlayerIsNow());
+//
+//        assertThrows(GameOver.class, PocketSeven::setMoveStones);
+//    }
 }

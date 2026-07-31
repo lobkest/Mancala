@@ -7,34 +7,48 @@ public abstract class PocketAbstract {
     protected int stones;
     protected PocketAbstract nextPocket;
     protected final Beurt beurt;
+    protected final int owner;
 
-    public PocketAbstract() {
+    protected PocketAbstract() {
         this.pocketNr = 1;
         this.stones = 4;
         this.beurt = new Beurt();
-        this.nextPocket = createNextPocket(2, this, this.beurt);
+        this.owner = 1;
+//        this.nextPocket = createNextPocket(2, this, this.beurt);
     }
 
-    protected PocketAbstract(int pocketNr, Beurt beurt) {
+    protected PocketAbstract(int pocketNr, Beurt beurt, int owner) {
         this.pocketNr = pocketNr;
         this.beurt = beurt;
+        this.owner = owner;
     }
 
-    protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt) {
-        if (nextNr == 7 || nextNr == 14) {
-            return new MancalaPocket(nextNr, firstPocket, beurt);
-        } else if (nextNr < 14) {
-            return new Pocket(nextNr, firstPocket, beurt);
-        } else if (nextNr == 15){
-            return firstPocket;
-        }
-        else{
-            throw new OngeldigBordException();
-        }
-    }
+//    protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt) {
+//        if (nextNr == 7 || nextNr == 14) {
+//            return new MancalaPocket(nextNr, firstPocket, beurt);
+//        } else if (nextNr < 14) {
+//            return new Pocket(nextNr, firstPocket, beurt);
+//        } else if (nextNr == 15){
+//            return firstPocket;
+//        }
+//        else{
+//            throw new OngeldigBordException();
+//        }
+//    }
+
+    protected abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt, int owner);
 
     public PocketAbstract getPocketFinder(int i) {
         return getPocketFinder(i, this);
+    }
+
+    protected abstract void passRemainingStones(int remainingStones);
+
+    protected void depositStoneAndPass(int stonesPassedOn) {
+        this.stones++;
+        stonesPassedOn--;
+
+        passRemainingStones(stonesPassedOn);
     }
 
     private PocketAbstract getPocketFinder(int i, PocketAbstract startPocket) {

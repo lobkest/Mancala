@@ -5,7 +5,7 @@ public class Beurt {
 
     public Beurt(){
         this.beurtPlayer = 1;
-
+//        this.beurtPlayer = (int)(Math.random()*1)+1; // als ik random wil selecteren wie begint
     }
 
     protected int getWhichPlayerIsNow(){
@@ -18,6 +18,10 @@ public class Beurt {
         } else {
             this.beurtPlayer = 1;
         }
+    }
+
+    public boolean isTurnOf(int player) {
+        return this.beurtPlayer == player;
     }
 
     // only for the tests, never to be used for interface
