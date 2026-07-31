@@ -1,7 +1,5 @@
-# Use a Maven image with JDK 21 / latest JDK for building
 image: maven:3.9-eclipse-temurin-21
 
-# Cache dependencies to speed up pipeline execution across runs
 cache:
   paths:
     - .m2/repository
@@ -13,13 +11,11 @@ stages:
   - build
   - test
 
-# Stage 1: Compile the project
 build:
   stage: build
   script:
     - mvn clean compile
 
-# Stage 2: Run all JUnit tests
 test:
   stage: test
   script:
