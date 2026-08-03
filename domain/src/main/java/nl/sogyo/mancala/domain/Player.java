@@ -17,10 +17,6 @@ public class Player {
         return this.turnOfPlayer;
     }
 
-    protected Player getOtherTurn() {
-        return this.otherTurn;
-    }
-
     protected void setChangeTurn() {
         boolean currentState = this.turnOfPlayer;
         this.turnOfPlayer = !currentState;

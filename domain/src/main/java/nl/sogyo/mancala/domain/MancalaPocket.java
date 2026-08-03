@@ -18,15 +18,9 @@ public class MancalaPocket extends PocketTemplate  {
         if (nextNr == 15) {
             return firstPocket;
         }
-
-        Player nextTurn = turnOne;
-        if (nextNr == 8) {
-            Player turnTwo = new Player(turnOne);
-            turnOne.giveTurnTwo(turnTwo);
-            nextTurn = turnTwo;
-        }
-
-        return new Pocket(nextNr, firstPocket, nextTurn);
+        Player turnTwo = new Player(turnOne);
+        turnOne.giveTurnTwo(turnTwo);
+        return new Pocket(nextNr, firstPocket, turnTwo);
     }
 
     @Override
@@ -66,13 +60,13 @@ public class MancalaPocket extends PocketTemplate  {
         this.getNextPocket().clearAllSideStonesToMancalas();
     }
 
-    @Override
-    int getSideStonesCount() {
-        return 0;
-    }
+//    @Override
+//    int getSideStonesCount() {
+//        return 0;
+//    }
 
-    @Override
-    int clearSideStones() {
-        return 0;
-    }
+//    @Override
+//    int clearSideStones() {
+//        return 0;
+//    }
 }

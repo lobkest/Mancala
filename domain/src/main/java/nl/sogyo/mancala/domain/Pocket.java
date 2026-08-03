@@ -7,11 +7,9 @@ public class Pocket extends PocketTemplate {
 
     public Pocket() {
         super();
-
         PocketTemplate next = createNextPocket(2, this, getTurn());
         setNextPocket(next);
     }
-
 
     Pocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
         super(pocketNr, turn, 4);
@@ -41,6 +39,11 @@ public class Pocket extends PocketTemplate {
         int stonesToPass = this.getStonesAmount();
         setStones(0);
         this.getNextPocket().receiveStones(stonesToPass);
+    }
+
+    public void setMoveStones(int pocketNr) {
+        PocketTemplate pocketFound = getPocketFinder(pocketNr);
+        pocketFound.setMoveStones();
     }
 
     @Override
@@ -94,16 +97,16 @@ public class Pocket extends PocketTemplate {
         return this.getPocketFinder(14 - pocketNr);
     }
 
-    @Override
-    int getSideStonesCount() {
-        return this.getStonesAmount() + this.getNextPocket().getSideStonesCount();
-    }
+//    @Override
+//    int getSideStonesCount() {
+//        return this.getStonesAmount() + this.getNextPocket().getSideStonesCount();
+//    }
 
-    @Override
-    int clearSideStones() {
-        int count = this.getStonesAmount();
-        this.setStones(0);
-        return count + this.getNextPocket().clearSideStones();
-    }
+//    @Override
+//    int clearSideStones() {
+//        int count = this.getStonesAmount();
+//        this.setStones(0);
+//        return count + this.getNextPocket().clearSideStones();
+//    }
 
 }

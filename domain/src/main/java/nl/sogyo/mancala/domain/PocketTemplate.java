@@ -126,6 +126,6 @@ public abstract class PocketTemplate {
 
     public abstract void setMoveStones();
 
-    abstract int getSideStonesCount();
-    abstract int clearSideStones();
+//    abstract int getSideStonesCount();
+//    abstract int clearSideStones();
 }
