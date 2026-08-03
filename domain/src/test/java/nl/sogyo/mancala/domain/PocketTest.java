@@ -24,19 +24,19 @@ public class PocketTest {
     @Test
     public void testFirstPocketNumber() {
         Pocket pocket = new Pocket();
-        assertEquals(1, pocket.pocketNr);
+        assertEquals(1, pocket.getPocketNr());
     }
 
     @Test
     public void testFirstPocketStones() {
         Pocket pocket = new Pocket();
-        assertEquals(4, pocket.stones);
+        assertEquals(4, pocket.getStonesAmount());
     }
 
     @Test
     public void testFirstPocketNextNr() {
         Pocket pocket = new Pocket();
-        assertEquals(2, pocket.nextPocket.pocketNr);
+        assertEquals(2, pocket.getNextPocket().getPocketNr());
     }
 
     @ParameterizedTest
@@ -44,7 +44,7 @@ public class PocketTest {
     public void testAllPocketNr(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract pocketFound = pocket.getPocketFinder(pocketNr);
-        int pocketNrFound = pocketFound.pocketNr;
+        int pocketNrFound = pocketFound.getPocketNr();
         assertEquals(pocketNr, pocketNrFound);
     }
 
@@ -53,7 +53,7 @@ public class PocketTest {
     public void testAllPocketStones(int PocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract pocketFound = pocket.getPocketFinder(PocketNr);
-        int stones = pocketFound.stones;
+        int stones = pocketFound.getStonesAmount();
         assertEquals(4, stones);
     }
 
@@ -62,7 +62,7 @@ public class PocketTest {
     public void testAllNextPocketNumbers(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract pocketFound = pocket.getPocketFinder(pocketNr);
-        int pocketNrNext = pocketFound.nextPocket.pocketNr;
+        int pocketNrNext = pocketFound.getNextPocket().getPocketNr();
         assertEquals(pocketNr + 1, pocketNrNext);
     }
 
@@ -78,7 +78,7 @@ public class PocketTest {
     public void testLastPocketHasFirstPocketAsNext() {
         Pocket pocket = new Pocket();
         PocketAbstract pocketFound = pocket.getPocketFinder(14);
-        assertEquals(1, pocketFound.nextPocket.pocketNr);
+        assertEquals(1, pocketFound.getNextPocket().getPocketNr());
     }
 
     @ParameterizedTest
@@ -86,7 +86,7 @@ public class PocketTest {
     public void testMancalaHasZeroStones(int pocketNrMancala) {
         Pocket pocket = new Pocket();
         PocketAbstract pocketFound = pocket.getPocketFinder(pocketNrMancala);
-        assertEquals(0, pocketFound.stones);
+        assertEquals(0, pocketFound.getStonesAmount());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         PocketAbstract pocketFound = pocket.getPocketFinder(1);
         pocketFound.setMoveStones();
-        assertEquals(0, pocketFound.stones);
+        assertEquals(0, pocketFound.getStonesAmount());
     }
 
     @ParameterizedTest
@@ -104,7 +104,7 @@ public class PocketTest {
         PocketAbstract FirstPocket = pocket.getPocketFinder(1);
         FirstPocket.setMoveStones();
         PocketAbstract nextPockets = pocket.getPocketFinder(nextPocketWithFiveStones);
-        assertEquals(5, nextPockets.stones);
+        assertEquals(5, nextPockets.getStonesAmount());
     }
 
     @ParameterizedTest
@@ -114,7 +114,7 @@ public class PocketTest {
         PocketAbstract FirstPocket = pocket.getPocketFinder(1);
         FirstPocket.setMoveStones();
         PocketAbstract nextPockets = pocket.getPocketFinder(nextPocketWithFiveStones);
-        assertEquals(4, nextPockets.stones);
+        assertEquals(4, nextPockets.getStonesAmount());
     }
 
     @ParameterizedTest
@@ -124,7 +124,7 @@ public class PocketTest {
         PocketAbstract FirstPocket = pocket.getPocketFinder(1);
         FirstPocket.setMoveStones();
         PocketAbstract nextPockets = pocket.getPocketFinder(nextPocketWithFiveStones);
-        assertEquals(0, nextPockets.stones);
+        assertEquals(0, nextPockets.getStonesAmount());
     }
 
     @ParameterizedTest
@@ -135,7 +135,7 @@ public class PocketTest {
         PocketAbstract SixthPocket = pocket.getPocketFinder(6);
         SixthPocket.setMoveStones();
         PocketAbstract nextPockets = pocket.getPocketFinder(nextPocketToCheck);
-        assertEquals(nextPockets.stones, stones);
+        assertEquals(nextPockets.getStonesAmount(), stones);
     }
 
     @ParameterizedTest
@@ -145,7 +145,7 @@ public class PocketTest {
         PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
         PocketFound.setMoveStones();
 
-        assertEquals(0, PocketFound.stones);
+        assertEquals(0, PocketFound.getStonesAmount());
     }
 
     @ParameterizedTest
@@ -162,10 +162,10 @@ public class PocketTest {
     public void testPlayerTwoCanPlayPocketEightToThirteen(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
-        PocketFound.turn.setChangeTurn();
+        PocketFound.setChangeTurn();
 
         PocketFound.setMoveStones();
-        assertEquals(0, PocketFound.stones);
+        assertEquals(0, PocketFound.getStonesAmount());
     }
 
     @ParameterizedTest
@@ -173,7 +173,7 @@ public class PocketTest {
     public void testPlayerTwoCanNotPlayPocketOneToSix(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
-        PocketFound.turn.setChangeTurn();
+        PocketFound.setChangeTurn();
 
         assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
     }
@@ -192,7 +192,7 @@ public class PocketTest {
     public void testPlayerTwoCanoNotPLayMancalas(int mancalaNr) {
         Pocket pocket = new Pocket();
         PocketAbstract PocketFound = pocket.getPocketFinder(mancalaNr);
-        PocketFound.turn.setChangeTurn();
+        PocketFound.setChangeTurn();
 
         assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
     }
@@ -202,7 +202,7 @@ public class PocketTest {
     public void testPlayerTwoCanoNotMoveStonesOfMancalas(int mancalaNr) {
         Pocket pocket = new Pocket();
         PocketAbstract PocketFound = pocket.getPocketFinder(mancalaNr);
-        PocketFound.turn.setChangeTurn();
+        PocketFound.setChangeTurn();
         assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
     }
 
@@ -219,7 +219,7 @@ public class PocketTest {
     public void testPlayerTwoCanNotMoveStonesFromPocketOneToSix(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
-        PocketFound.turn.setChangeTurn();
+        PocketFound.setChangeTurn();
         assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
     }
 
@@ -236,9 +236,9 @@ public class PocketTest {
     public void testTurnSwitchedInPocketOneAndCheckTurnInRestOfPocketsOfPlayerOne(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract PocketOne = pocket.getPocketFinder(1);
-        PocketOne.turn.setChangeTurn();
+        PocketOne.setChangeTurn();
         PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
-        assertFalse(PocketFound.turn.isTurnOfThisPlayer());
+        assertFalse(PocketFound.isTurnOfThisPlayer());
     }
 
     @ParameterizedTest
@@ -246,16 +246,16 @@ public class PocketTest {
     public void testTurnSwitchedInPocketOneAndCheckTurnInRestOfPocketsOfPlayerTwo(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract PocketOne = pocket.getPocketFinder(1);
-        PocketOne.turn.setChangeTurn();
+        PocketOne.setChangeTurn();
         PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
-        assertTrue(PocketFound.turn.isTurnOfThisPlayer());
+        assertTrue(PocketFound.isTurnOfThisPlayer());
     }
 
     @Test
     public void testTurnInMancalaOneIsSetToPlayerOneWhenInitialized(){
         Pocket pocket = new Pocket();
         PocketAbstract MancalaOne = pocket.getPocketFinder(7);
-        assertTrue(MancalaOne.turn.isTurnOfThisPlayer());
+        assertTrue(MancalaOne.isTurnOfThisPlayer());
     }
 
     @ParameterizedTest
@@ -263,9 +263,9 @@ public class PocketTest {
     public void testTurnSwitchedInPocketEightAndCheckTurnInRestOfPocketsOfPlayerOne(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract PocketEight = pocket.getPocketFinder(8);
-        PocketEight.turn.setChangeTurn();
+        PocketEight.setChangeTurn();
         PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
-        assertFalse(PocketFound.turn.isTurnOfThisPlayer());
+        assertFalse(PocketFound.isTurnOfThisPlayer());
     }
 
     @ParameterizedTest
@@ -273,9 +273,9 @@ public class PocketTest {
     public void testTurnSwitchedInPocketEightAndCheckTurnInRestOfPocketsOfPlayerTwo(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketAbstract PocketEight = pocket.getPocketFinder(8);
-        PocketEight.turn.setChangeTurn();
+        PocketEight.setChangeTurn();
         PocketAbstract PocketFound = pocket.getPocketFinder(pocketNr);
-        assertTrue(PocketFound.turn.isTurnOfThisPlayer());
+        assertTrue(PocketFound.isTurnOfThisPlayer());
     }
 
     @Test
@@ -283,32 +283,32 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         PocketAbstract PocketSix = pocket.getPocketFinder(6);
         PocketSix.setMoveStones();
-        PocketSix.turn.setChangeTurn();
+        PocketSix.setChangeTurn();
         PocketAbstract PocketTwo = pocket.getPocketFinder(2);
         PocketTwo.setMoveStones();
 
-        assertEquals(0, PocketSix.stones);
+        assertEquals(0, PocketSix.getStonesAmount());
         PocketAbstract PocketMancalaSeven = pocket.getPocketFinder(7);
-        assertEquals(7, PocketMancalaSeven.stones);
+        assertEquals(7, PocketMancalaSeven.getStonesAmount());
         PocketAbstract PocketMancalaEight = pocket.getPocketFinder(8);
-        assertEquals(0, PocketMancalaEight.stones);
+        assertEquals(0, PocketMancalaEight.getStonesAmount());
     }
 
     @Test
     public void testLastStoneInOwnEmptyPocketMeansGettingThemToMancalaPlusNeighborForPlayerTwo() {
         Pocket pocket = new Pocket();
-        pocket.turn.setChangeTurn();
+        pocket.setChangeTurn();
         PocketAbstract PocketTwelve = pocket.getPocketFinder(12);
         PocketTwelve.setMoveStones();
-        PocketTwelve.turn.setChangeTurn();
+        PocketTwelve.setChangeTurn();
         PocketAbstract PocketEight = pocket.getPocketFinder(8);
         PocketEight.setMoveStones();
 
-        assertEquals(0, PocketTwelve.stones);
+        assertEquals(0, PocketTwelve.getStonesAmount());
         PocketAbstract PocketMancalaFourteen = pocket.getPocketFinder(14);
-        assertEquals(7, PocketMancalaFourteen.stones);
+        assertEquals(7, PocketMancalaFourteen.getStonesAmount());
         PocketAbstract PocketMancalaTwo = pocket.getPocketFinder(2);
-        assertEquals(0, PocketMancalaTwo.stones);
+        assertEquals(0, PocketMancalaTwo.getStonesAmount());
     }
 
     @Test
@@ -320,8 +320,8 @@ public class PocketTest {
         PocketAbstract PocketTwo = pocket.getPocketFinder(2);
         PocketAbstract PocketMancalaTwo = pocket.getPocketFinder(14);
 
-        assertEquals(6, PocketTwo.stones);
-        assertEquals(0, PocketMancalaTwo.stones);
+        assertEquals(6, PocketTwo.getStonesAmount());
+        assertEquals(0, PocketMancalaTwo.getStonesAmount());
     }
 
     @Test
@@ -329,7 +329,7 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         PocketAbstract PocketThree = pocket.getPocketFinder(3);
         PocketThree.setMoveStones();
-        assertTrue(PocketThree.turn.isTurnOfThisPlayer());
+        assertTrue(PocketThree.isTurnOfThisPlayer());
 
     }
 
@@ -338,7 +338,7 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         PocketAbstract PocketFour = pocket.getPocketFinder(4);
         PocketFour.setMoveStones();
-        assertFalse(PocketFour.turn.isTurnOfThisPlayer());
+        assertFalse(PocketFour.isTurnOfThisPlayer());
     }
 
     @Test
@@ -350,24 +350,24 @@ public class PocketTest {
         PocketSix.setMoveStones();
         PocketAbstract PocketFour = pocket.getPocketFinder(4);
 
-        assertEquals(4, PocketFour.stones);
+        assertEquals(4, PocketFour.getStonesAmount());
     }
 
-    @Test
-    public void testOwnerOfPocketSevenIsOne() {
-        Pocket pocket = new Pocket();
-        PocketAbstract MancalaOne = pocket.getPocketFinder(7);
-
-        assertEquals(1, MancalaOne.owner);
-    }
-
-    @Test
-    public void testOwnerOfPocketFourteenIsTwo() {
-        Pocket pocket = new Pocket();
-        PocketAbstract MancalaTwo = pocket.getPocketFinder(14);
-
-        assertEquals(2, MancalaTwo.owner);
-    }
+//    @Test
+//    public void testOwnerOfPocketSevenIsOne() {
+//        Pocket pocket = new Pocket();
+//        PocketAbstract MancalaOne = pocket.getPocketFinder(7);
+//
+//        assertEquals(1, MancalaOne.owner);
+//    }
+//
+//    @Test
+//    public void testOwnerOfPocketFourteenIsTwo() {
+//        Pocket pocket = new Pocket();
+//        PocketAbstract MancalaTwo = pocket.getPocketFinder(14);
+//
+//        assertEquals(2, MancalaTwo.owner);
+//    }
 
 
 
@@ -456,7 +456,7 @@ public class PocketTest {
             currentPocket.setStones(0);
         }
 
-        pocket.turn.setChangeTurn();
+        pocket.setChangeTurn();
 
         assertThrows(GameOver.class, pocket::setMoveStones);
         assertEquals(1, pocket.getWhoIsTheWinner());

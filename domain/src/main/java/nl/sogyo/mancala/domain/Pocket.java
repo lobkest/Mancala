@@ -7,17 +7,21 @@ public class Pocket extends PocketAbstract {
 
     public Pocket() {
         super();
-        this.nextPocket = createNextPocket(2, this, this.owner, this.turn);
+
+        PocketAbstract next = createNextPocket(2, this, 1, getTurn());
+        setNextPocket(next);
     }
 
-    protected Pocket(int pocketNr, PocketAbstract firstPocket, int owner, Player turn) {
-        super(pocketNr, owner, turn);
-        this.stones = 4;
-        this.nextPocket = createNextPocket(pocketNr + 1, firstPocket, owner, turn);
+
+    Pocket(int pocketNr, PocketAbstract firstPocket, int owner, Player turn) {
+        super(pocketNr, owner, turn, 4);
+
+        PocketAbstract next = createNextPocket(pocketNr + 1, firstPocket, owner, turn);
+        setNextPocket(next);
     }
 
     @Override
-    protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turn){
+    PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turn) {
         return switch (nextNr) {
             case 7, 14 -> new MancalaPocket(nextNr, firstPocket, owner, turn);
             default    -> new Pocket(nextNr, firstPocket, owner, turn);
@@ -28,33 +32,33 @@ public class Pocket extends PocketAbstract {
     public void setMoveStones() {
         determineIfGameIsOver();
 
-        boolean canPlay = this.turn.isTurnOfThisPlayer() && this.stones > 0;
+        boolean canPlay = this.getTurn().isTurnOfThisPlayer() && this.getStonesAmount() > 0;
 
         if (!canPlay) {
             throw new CanNotPlayThisPocket();
         }
 
-        int stonesToPass = this.stones;
+        int stonesToPass = this.getStonesAmount();
         setStones(0);
-        this.nextPocket.receiveStones(stonesToPass);
+        this.getNextPocket().receiveStones(stonesToPass);
     }
 
     @Override
-    protected void passRemainingStones(int remainingStones) {
+    void passRemainingStones(int remainingStones) {
         if (remainingStones > 0) {
-            this.nextPocket.receiveStones(remainingStones);
+            this.getNextPocket().receiveStones(remainingStones);
         } else {
             lastStoneInPocket();
-            this.turn.setChangeTurn();
+            this.setChangeTurn();
         }
     }
 
     private void lastStoneInPocket() {
-        boolean isMyTurn = this.turn.isTurnOfThisPlayer();
-        if (this.stones == 1 && isMyTurn) {
+        boolean isMyTurn = this.getTurn().isTurnOfThisPlayer();
+        if (this.getStonesAmount() == 1 && isMyTurn) {
             this.setStones(0);
 
-            PocketAbstract neighborPocket = findNeighborPocket(this.pocketNr);
+            PocketAbstract neighborPocket = findNeighborPocket(this.getPocketNr());
             PocketAbstract mancalaOwn = findMyMancala();
 
             int neighborPocketStonesAmount = neighborPocket.getStonesAmount();
@@ -67,39 +71,39 @@ public class Pocket extends PocketAbstract {
     }
 
     @Override
-    protected boolean isCurrentTurnSideEmpty() {
-        if (this.turn.isTurnOfThisPlayer()) {
-            boolean thisPocketIsEmpty = (this.stones == 0);
-            return thisPocketIsEmpty && this.nextPocket.isCurrentTurnSideEmpty();
+    boolean isCurrentTurnSideEmpty() {
+        if (this.getTurn().isTurnOfThisPlayer()) {
+            boolean thisPocketIsEmpty = (this.getStonesAmount() == 0);
+            return thisPocketIsEmpty && this.getNextPocket().isCurrentTurnSideEmpty();
         }
 
-        return this.nextPocket.isCurrentTurnSideEmpty();
+        return this.getNextPocket().isCurrentTurnSideEmpty();
     }
 
     @Override
-    protected void clearAllSideStonesToMancalas() {
-        if (this.stones > 0) {
+    void clearAllSideStonesToMancalas() {
+        if (this.getStonesAmount() > 0) {
             PocketAbstract myMancala = findMyMancala();
-            myMancala.setAddStones(this.stones);
-            this.stones = 0;
+            myMancala.setAddStones(this.getStonesAmount());
+            this.setStones(0);
         }
-        this.nextPocket.clearAllSideStonesToMancalas();
+        this.getNextPocket().clearAllSideStonesToMancalas();
     }
 
-    protected PocketAbstract findNeighborPocket(int pocketNr) {
+    PocketAbstract findNeighborPocket(int pocketNr) {
         return this.getPocketFinder(14 - pocketNr);
     }
 
     @Override
-    protected int getSideStonesCount() {
-        return this.stones + this.nextPocket.getSideStonesCount();
+    int getSideStonesCount() {
+        return this.getStonesAmount() + this.getNextPocket().getSideStonesCount();
     }
 
     @Override
-    protected int clearSideStones() {
-        int count = this.stones;
-        this.stones = 0;
-        return count + this.nextPocket.clearSideStones();
+    int clearSideStones() {
+        int count = this.getStonesAmount();
+        this.setStones(0);
+        return count + this.getNextPocket().clearSideStones();
     }
 
 }

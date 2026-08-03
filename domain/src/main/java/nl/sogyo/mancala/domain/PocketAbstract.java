@@ -6,38 +6,47 @@ import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 
 public abstract class PocketAbstract {
-    protected final int pocketNr;
-    protected int stones;
-    protected PocketAbstract nextPocket;
-    protected final int owner;
-    protected final Player turn;
+    private final int pocketNr;
+    private int stones;
+    private PocketAbstract nextPocket;
+    private final int owner;
+    private final Player turn;
 
-    protected PocketAbstract() {
+    PocketAbstract() {
         this.pocketNr = 1;
-        this.stones = 4;
-        this.turn = new Player();
         this.owner = 1;
+        this.turn = new Player();
+        this.stones = 4;
     }
 
-    protected PocketAbstract(int pocketNr, int owner, Player turn) {
+    PocketAbstract(int pocketNr, int owner, Player turn, int stones) {
         this.pocketNr = pocketNr;
         this.owner = owner;
         this.turn = turn;
+        this.stones = stones;
     }
 
-    protected abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turn);
+    void setNextPocket(PocketAbstract nextPocket) {
+        this.nextPocket = nextPocket;
+    }
 
-    protected PocketAbstract getPocketFinder(int i) {
+    PocketAbstract getNextPocket() {
+        return this.nextPocket;
+    }
+
+    abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turn);
+
+    PocketAbstract getPocketFinder(int i) {
         return getPocketFinder(i, this);
     }
 
-    protected void receiveStones(int stonesPassedOn) {
+    void receiveStones(int stonesPassedOn) {
         depositStoneAndPass(stonesPassedOn);
     }
 
-    protected abstract void passRemainingStones(int remainingStones);
+    abstract void passRemainingStones(int remainingStones);
 
-    protected void depositStoneAndPass(int stonesPassedOn) {
+    void depositStoneAndPass(int stonesPassedOn) {
         this.stones++;
         stonesPassedOn--;
 
@@ -54,13 +63,13 @@ public abstract class PocketAbstract {
         return this.nextPocket.getPocketFinder(i, startPocket);
     }
 
-    protected void determineIfGameIsOver() {
+    void determineIfGameIsOver() {
         if (isCurrentTurnSideEmpty()) {
             gameFinished();
         }
     }
 
-    protected abstract boolean isCurrentTurnSideEmpty();
+    abstract boolean isCurrentTurnSideEmpty();
 
     private void gameFinished() {
         clearAllSideStonesToMancalas();
@@ -68,7 +77,7 @@ public abstract class PocketAbstract {
         throw new GameOver();
     }
 
-    protected abstract void clearAllSideStonesToMancalas();
+    abstract void clearAllSideStonesToMancalas();
 
     public int getWhoIsTheWinner(){
         PocketAbstract PlayerOne = getPocketFinder(1);
@@ -83,26 +92,43 @@ public abstract class PocketAbstract {
         return myMancala.getStonesAmount();
     }
 
-    protected void setStones(int amount) {
+    void setStones(int amount) {
         this.stones = amount;
     }
 
-    protected PocketAbstract findMyMancala() {
+    PocketAbstract findMyMancala() {
         if (this.nextPocket instanceof MancalaPocket && this.nextPocket.owner == this.owner) {
             return this.nextPocket;
         }
         return this.nextPocket.findMyMancala();
     }
 
-    protected int getStonesAmount(){
+    int getStonesAmount(){
         return this.stones;
     }
-    protected void setAddStones(int amount){
+
+    Player getTurn(){
+        return this.turn;
+    }
+
+    boolean isTurnOfThisPlayer(){
+        return this.turn.isTurnOfThisPlayer();
+    }
+
+    int getPocketNr(){
+        return this.pocketNr;
+    }
+
+    void setChangeTurn(){
+        this.turn.setChangeTurn();
+    }
+
+    void setAddStones(int amount){
         this.stones += amount;
     }
 
     public abstract void setMoveStones();
 
-    protected abstract int getSideStonesCount();
-    protected abstract int clearSideStones();
+    abstract int getSideStonesCount();
+    abstract int clearSideStones();
 }

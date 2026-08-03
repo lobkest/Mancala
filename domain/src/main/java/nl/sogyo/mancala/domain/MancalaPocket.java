@@ -6,24 +6,27 @@ import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 public class MancalaPocket extends PocketAbstract  {
 
-    protected MancalaPocket(int pocketNr, PocketAbstract firstPocket, int owner, Player turn) {
-        super(pocketNr, owner, turn);
-        this.stones = 0;
-        this.nextPocket = createNextPocket(pocketNr + 1, firstPocket, owner, turn);
+    MancalaPocket(int pocketNr, PocketAbstract firstPocket, int owner, Player turn) {
+        super(pocketNr, owner, turn, 0);
+
+        PocketAbstract next = createNextPocket(pocketNr + 1, firstPocket, owner, turn);
+        setNextPocket(next);
     }
 
     @Override
-    protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turnOne) {
-        int nextOwner = owner + 1;
+    PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turnOne) {
         if (nextNr == 15) {
             return firstPocket;
         }
+
         Player nextTurn = turnOne;
         if (owner == 1) {
             Player turnTwo = new Player(turnOne);
             turnOne.giveTurnTwo(turnTwo);
             nextTurn = turnTwo;
         }
+
+        int nextOwner = owner + 1;
         return new Pocket(nextNr, firstPocket, nextOwner, nextTurn);
     }
 
@@ -33,44 +36,44 @@ public class MancalaPocket extends PocketAbstract  {
     }
 
     @Override
-    protected void passRemainingStones(int remainingStones) {
+    void passRemainingStones(int remainingStones) {
         if (remainingStones > 0) {
-            this.nextPocket.receiveStones(remainingStones);
+            this.getNextPocket().receiveStones(remainingStones);
         }
     }
 
     @Override
-    protected void receiveStones(int stonesPassedOn) {
-        if (this.turn.isTurnOfThisPlayer()) {
+    void receiveStones(int stonesPassedOn) {
+        if (this.getTurn().isTurnOfThisPlayer()) {
             depositStoneAndPass(stonesPassedOn);
         } else {
-            this.nextPocket.receiveStones(stonesPassedOn);
+            this.getNextPocket().receiveStones(stonesPassedOn);
         }
     }
 
     @Override
-    protected boolean isCurrentTurnSideEmpty() {
-        if (this.turn.isTurnOfThisPlayer()) {
+    boolean isCurrentTurnSideEmpty() {
+        if (this.getTurn().isTurnOfThisPlayer()) {
             return true;
         }
-        return this.nextPocket.isCurrentTurnSideEmpty();
+        return this.getNextPocket().isCurrentTurnSideEmpty();
     }
 
     @Override
-    protected void clearAllSideStonesToMancalas() {
-        if (this.pocketNr == 14) {
+    void clearAllSideStonesToMancalas() {
+        if (this.getPocketNr() == 14) {
             return;
         }
-        this.nextPocket.clearAllSideStonesToMancalas();
+        this.getNextPocket().clearAllSideStonesToMancalas();
     }
 
     @Override
-    protected int getSideStonesCount() {
+    int getSideStonesCount() {
         return 0;
     }
 
     @Override
-    protected int clearSideStones() {
+    int clearSideStones() {
         return 0;
     }
 }
