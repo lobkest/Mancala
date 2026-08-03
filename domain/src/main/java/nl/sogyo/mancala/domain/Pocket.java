@@ -8,23 +8,23 @@ public class Pocket extends PocketAbstract {
     public Pocket() {
         super();
 
-        PocketAbstract next = createNextPocket(2, this, 1, getTurn());
+        PocketAbstract next = createNextPocket(2, this, getTurn());
         setNextPocket(next);
     }
 
 
-    Pocket(int pocketNr, PocketAbstract firstPocket, int owner, Player turn) {
-        super(pocketNr, owner, turn, 4);
+    Pocket(int pocketNr, PocketAbstract firstPocket, Player turn) {
+        super(pocketNr, turn, 4);
 
-        PocketAbstract next = createNextPocket(pocketNr + 1, firstPocket, owner, turn);
+        PocketAbstract next = createNextPocket(pocketNr + 1, firstPocket, turn);
         setNextPocket(next);
     }
 
     @Override
-    PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turn) {
+    PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Player turn) {
         return switch (nextNr) {
-            case 7, 14 -> new MancalaPocket(nextNr, firstPocket, owner, turn);
-            default    -> new Pocket(nextNr, firstPocket, owner, turn);
+            case 7, 14 -> new MancalaPocket(nextNr, firstPocket, turn);
+            default    -> new Pocket(nextNr, firstPocket, turn);
         };
     }
 

@@ -9,19 +9,16 @@ public abstract class PocketAbstract {
     private final int pocketNr;
     private int stones;
     private PocketAbstract nextPocket;
-    private final int owner;
     private final Player turn;
 
     PocketAbstract() {
         this.pocketNr = 1;
-        this.owner = 1;
         this.turn = new Player();
         this.stones = 4;
     }
 
-    PocketAbstract(int pocketNr, int owner, Player turn, int stones) {
+    PocketAbstract(int pocketNr, Player turn, int stones) {
         this.pocketNr = pocketNr;
-        this.owner = owner;
         this.turn = turn;
         this.stones = stones;
     }
@@ -34,7 +31,7 @@ public abstract class PocketAbstract {
         return this.nextPocket;
     }
 
-    abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turn);
+    abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Player turn);
 
     PocketAbstract getPocketFinder(int i) {
         return getPocketFinder(i, this);
@@ -97,7 +94,7 @@ public abstract class PocketAbstract {
     }
 
     PocketAbstract findMyMancala() {
-        if (this.nextPocket instanceof MancalaPocket && this.nextPocket.owner == this.owner) {
+        if (this.nextPocket instanceof MancalaPocket) {
             return this.nextPocket;
         }
         return this.nextPocket.findMyMancala();
