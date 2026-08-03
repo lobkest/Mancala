@@ -3,25 +3,25 @@ package nl.sogyo.mancala.domain;
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
-public class Pocket extends PocketAbstract {
+public class Pocket extends PocketTemplate {
 
     public Pocket() {
         super();
 
-        PocketAbstract next = createNextPocket(2, this, getTurn());
+        PocketTemplate next = createNextPocket(2, this, getTurn());
         setNextPocket(next);
     }
 
 
-    Pocket(int pocketNr, PocketAbstract firstPocket, Player turn) {
+    Pocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
         super(pocketNr, turn, 4);
 
-        PocketAbstract next = createNextPocket(pocketNr + 1, firstPocket, turn);
+        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn);
         setNextPocket(next);
     }
 
     @Override
-    PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Player turn) {
+    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn) {
         return switch (nextNr) {
             case 7, 14 -> new MancalaPocket(nextNr, firstPocket, turn);
             default    -> new Pocket(nextNr, firstPocket, turn);
@@ -58,8 +58,8 @@ public class Pocket extends PocketAbstract {
         if (this.getStonesAmount() == 1 && isMyTurn) {
             this.setStones(0);
 
-            PocketAbstract neighborPocket = findNeighborPocket(this.getPocketNr());
-            PocketAbstract mancalaOwn = findMyMancala();
+            PocketTemplate neighborPocket = findNeighborPocket(this.getPocketNr());
+            PocketTemplate mancalaOwn = findMyMancala();
 
             int neighborPocketStonesAmount = neighborPocket.getStonesAmount();
 
@@ -83,14 +83,14 @@ public class Pocket extends PocketAbstract {
     @Override
     void clearAllSideStonesToMancalas() {
         if (this.getStonesAmount() > 0) {
-            PocketAbstract myMancala = findMyMancala();
+            PocketTemplate myMancala = findMyMancala();
             myMancala.setAddStones(this.getStonesAmount());
             this.setStones(0);
         }
         this.getNextPocket().clearAllSideStonesToMancalas();
     }
 
-    PocketAbstract findNeighborPocket(int pocketNr) {
+    PocketTemplate findNeighborPocket(int pocketNr) {
         return this.getPocketFinder(14 - pocketNr);
     }
 

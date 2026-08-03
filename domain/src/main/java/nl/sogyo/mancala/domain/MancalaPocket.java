@@ -4,17 +4,17 @@ package nl.sogyo.mancala.domain;
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
-public class MancalaPocket extends PocketAbstract  {
+public class MancalaPocket extends PocketTemplate  {
 
-    MancalaPocket(int pocketNr, PocketAbstract firstPocket, Player turn) {
+    MancalaPocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
         super(pocketNr, turn, 0);
 
-        PocketAbstract next = createNextPocket(pocketNr + 1, firstPocket, turn);
+        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn);
         setNextPocket(next);
     }
 
     @Override
-    PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Player turnOne) {
+    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turnOne) {
         if (nextNr == 15) {
             return firstPocket;
         }

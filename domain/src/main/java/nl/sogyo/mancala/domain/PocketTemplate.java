@@ -5,35 +5,35 @@ import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 
-public abstract class PocketAbstract {
+public abstract class PocketTemplate {
     private final int pocketNr;
     private int stones;
-    private PocketAbstract nextPocket;
+    private PocketTemplate nextPocket;
     private final Player turn;
 
-    PocketAbstract() {
+    PocketTemplate() {
         this.pocketNr = 1;
         this.turn = new Player();
         this.stones = 4;
     }
 
-    PocketAbstract(int pocketNr, Player turn, int stones) {
+    PocketTemplate(int pocketNr, Player turn, int stones) {
         this.pocketNr = pocketNr;
         this.turn = turn;
         this.stones = stones;
     }
 
-    void setNextPocket(PocketAbstract nextPocket) {
+    void setNextPocket(PocketTemplate nextPocket) {
         this.nextPocket = nextPocket;
     }
 
-    PocketAbstract getNextPocket() {
+    PocketTemplate getNextPocket() {
         return this.nextPocket;
     }
 
-    abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Player turn);
+    abstract PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn);
 
-    PocketAbstract getPocketFinder(int i) {
+    PocketTemplate getPocketFinder(int i) {
         return getPocketFinder(i, this);
     }
 
@@ -50,7 +50,7 @@ public abstract class PocketAbstract {
         passRemainingStones(stonesPassedOn);
     }
 
-    private PocketAbstract getPocketFinder(int i, PocketAbstract startPocket) {
+    private PocketTemplate getPocketFinder(int i, PocketTemplate startPocket) {
         if (this.pocketNr == i) {
             return this;
         }
@@ -77,15 +77,15 @@ public abstract class PocketAbstract {
     abstract void clearAllSideStonesToMancalas();
 
     public int getWhoIsTheWinner(){
-        PocketAbstract PlayerOne = getPocketFinder(1);
-        PocketAbstract PlayerTwo = getPocketFinder(8);
+        PocketTemplate PlayerOne = getPocketFinder(1);
+        PocketTemplate PlayerTwo = getPocketFinder(8);
         int scorePlayerOne = PlayerOne.getWhatIsTheScore();
         int scorePlayerTwo = PlayerTwo.getWhatIsTheScore();
         return (scorePlayerOne > scorePlayerTwo) ? 1 : (scorePlayerTwo > scorePlayerOne) ? 2 : 0;
     }
 
     private int getWhatIsTheScore(){
-        PocketAbstract myMancala = findMyMancala();
+        PocketTemplate myMancala = findMyMancala();
         return myMancala.getStonesAmount();
     }
 
@@ -93,7 +93,7 @@ public abstract class PocketAbstract {
         this.stones = amount;
     }
 
-    PocketAbstract findMyMancala() {
+    PocketTemplate findMyMancala() {
         if (this.nextPocket instanceof MancalaPocket) {
             return this.nextPocket;
         }
