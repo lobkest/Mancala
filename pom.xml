@@ -42,5 +42,6 @@
 
     <modules>
         <module>domain</module>
+	<module>client</module>
     </modules>
 </project>

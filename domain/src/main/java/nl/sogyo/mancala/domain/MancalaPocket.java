@@ -60,13 +60,4 @@ public class MancalaPocket extends PocketTemplate  {
         this.getNextPocket().clearAllSideStonesToMancalas();
     }
 
-//    @Override
-//    int getSideStonesCount() {
-//        return 0;
-//    }
-
-//    @Override
-//    int clearSideStones() {
-//        return 0;
-//    }
 }

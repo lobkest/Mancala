@@ -27,7 +27,7 @@ public abstract class PocketTemplate {
         this.nextPocket = nextPocket;
     }
 
-    PocketTemplate getNextPocket() {
+    public PocketTemplate getNextPocket() {
         return this.nextPocket;
     }
 
@@ -100,7 +100,7 @@ public abstract class PocketTemplate {
         return this.nextPocket.findMyMancala();
     }
 
-    int getStonesAmount(){
+    public int getStonesAmount(){
         return this.stones;
     }
 
@@ -110,6 +110,11 @@ public abstract class PocketTemplate {
 
     boolean isTurnOfThisPlayer(){
         return this.turn.isTurnOfThisPlayer();
+    }
+
+    // just for client for now
+    public int getWhoseTurnIsIt(){
+        return this.isTurnOfThisPlayer() ? 1 : 2;
     }
 
     int getPocketNr(){
@@ -126,6 +131,4 @@ public abstract class PocketTemplate {
 
     public abstract void setMoveStones();
 
-//    abstract int getSideStonesCount();
-//    abstract int clearSideStones();
 }

@@ -3,6 +3,7 @@ package nl.sogyo.mancala.domain;
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
+
 public class Pocket extends PocketTemplate {
 
     public Pocket() {
@@ -36,9 +37,8 @@ public class Pocket extends PocketTemplate {
             throw new CanNotPlayThisPocket();
         }
 
-        int stonesToPass = this.getStonesAmount();
+        this.getNextPocket().receiveStones(this.getStonesAmount());
         setStones(0);
-        this.getNextPocket().receiveStones(stonesToPass);
     }
 
     public void setMoveStones(int pocketNr) {
@@ -96,17 +96,5 @@ public class Pocket extends PocketTemplate {
     PocketTemplate findNeighborPocket(int pocketNr) {
         return this.getPocketFinder(14 - pocketNr);
     }
-
-//    @Override
-//    int getSideStonesCount() {
-//        return this.getStonesAmount() + this.getNextPocket().getSideStonesCount();
-//    }
-
-//    @Override
-//    int clearSideStones() {
-//        int count = this.getStonesAmount();
-//        this.setStones(0);
-//        return count + this.getNextPocket().clearSideStones();
-//    }
 
 }

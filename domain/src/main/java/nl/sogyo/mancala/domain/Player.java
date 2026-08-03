@@ -1,14 +1,14 @@
 package nl.sogyo.mancala.domain;
 
-public class Player {
+class Player {
     private boolean turnOfPlayer;
     private Player otherTurn;
 
-    public Player() {
+    Player() {
         this.turnOfPlayer = true;
     }
 
-    public Player(Player turn) {
+    Player(Player turn) {
         this.turnOfPlayer = !turn.isTurnOfThisPlayer();
         this.otherTurn = turn;
     }
