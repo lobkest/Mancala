@@ -1,29 +1,31 @@
 package nl.sogyo.mancala.domain;
 
+import nl.sogyo.mancala.domain.exceptions.GameOver;
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
+
 
 public abstract class PocketAbstract {
     protected final int pocketNr;
     protected int stones;
     protected PocketAbstract nextPocket;
-    protected final Beurt beurt;
     protected final int owner;
+    protected final Player turn;
 
     protected PocketAbstract() {
         this.pocketNr = 1;
         this.stones = 4;
-        this.beurt = new Beurt();
+        this.turn = new Player();
         this.owner = 1;
     }
 
-    protected PocketAbstract(int pocketNr, Beurt beurt, int owner) {
+    protected PocketAbstract(int pocketNr, int owner, Player turn) {
         this.pocketNr = pocketNr;
-        this.beurt = beurt;
         this.owner = owner;
+        this.turn = turn;
     }
 
-    protected abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt, int owner);
+    protected abstract PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turn);
 
     protected PocketAbstract getPocketFinder(int i) {
         return getPocketFinder(i, this);
@@ -53,53 +55,45 @@ public abstract class PocketAbstract {
     }
 
     protected void determineIfGameIsOver() {
-        PocketAbstract playerOneStart = getPocketFinder(1);
-        PocketAbstract playerTwoStart = getPocketFinder(8);
-
-        boolean playerOneEmpty = playerOneStart.getSideStonesCount() == 0;
-        boolean playerTwoEmpty = playerTwoStart.getSideStonesCount() == 0;
-
-        if (playerOneEmpty || playerTwoEmpty) {
-            gameFinished(playerOneStart, playerTwoStart);
+        if (isCurrentTurnSideEmpty()) {
+            gameFinished();
         }
     }
 
-    private void gameFinished(PocketAbstract playerOneStart, PocketAbstract playerTwoStart) {
-        PocketAbstract mancalaOne = getPocketFinder(7);
-        PocketAbstract mancalaTwo = getPocketFinder(14);
+    protected abstract boolean isCurrentTurnSideEmpty();
 
-        int playerOneRemaining = playerOneStart.clearSideStones();
-        int playerTwoRemaining = playerTwoStart.clearSideStones();
-
-        mancalaOne.setAddStones(playerOneRemaining);
-        mancalaTwo.setAddStones(playerTwoRemaining);
-
-        mancalaOne.beurt.setGameOver();
+    private void gameFinished() {
+        clearAllSideStonesToMancalas();
+        this.turn.setGameOver();
+        throw new GameOver();
     }
+
+    protected abstract void clearAllSideStonesToMancalas();
 
     public int getWhoIsTheWinner(){
-        if (this.beurt.getWhichPlayerIsNow() == 0) {
-            int scorePlayerOne = getWhatIsTheScore(1);
-            int scorePlayerTwo = getWhatIsTheScore(2);
-            return (scorePlayerOne > scorePlayerTwo) ? 1 : (scorePlayerTwo > scorePlayerOne) ? 2 : 0;
-        }
-        return -1;
+        PocketAbstract PlayerOne = getPocketFinder(1);
+        PocketAbstract PlayerTwo = getPocketFinder(8);
+        int scorePlayerOne = PlayerOne.getWhatIsTheScore();
+        int scorePlayerTwo = PlayerTwo.getWhatIsTheScore();
+        return (scorePlayerOne > scorePlayerTwo) ? 1 : (scorePlayerTwo > scorePlayerOne) ? 2 : 0;
     }
 
-    private int getWhatIsTheScore(int playerNr){
-        int findpocket = 0;
-        if (playerNr == 1){
-            findpocket = 7;
-        }
-        else{
-            findpocket = 14;
-        }
-        return getPocketFinder(findpocket).getStonesAmount();
+    private int getWhatIsTheScore(){
+        PocketAbstract myMancala = findMyMancala();
+        return myMancala.getStonesAmount();
     }
 
     protected void setStones(int amount) {
         this.stones = amount;
     }
+
+    protected PocketAbstract findMyMancala() {
+        if (this.nextPocket instanceof MancalaPocket && this.nextPocket.owner == this.owner) {
+            return this.nextPocket;
+        }
+        return this.nextPocket.findMyMancala();
+    }
+
     protected int getStonesAmount(){
         return this.stones;
     }
@@ -111,5 +105,4 @@ public abstract class PocketAbstract {
 
     protected abstract int getSideStonesCount();
     protected abstract int clearSideStones();
-    protected abstract PocketAbstract findNeighborPocket(int pocketNr);
 }

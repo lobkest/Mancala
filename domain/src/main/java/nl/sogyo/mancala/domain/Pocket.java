@@ -7,20 +7,20 @@ public class Pocket extends PocketAbstract {
 
     public Pocket() {
         super();
-        this.nextPocket = createNextPocket(2, this, this.beurt, this.owner);
+        this.nextPocket = createNextPocket(2, this, this.owner, this.turn);
     }
 
-    protected Pocket(int pocketNr, PocketAbstract firstPocket, Beurt beurt, int owner) {
-        super(pocketNr, beurt, owner);
+    protected Pocket(int pocketNr, PocketAbstract firstPocket, int owner, Player turn) {
+        super(pocketNr, owner, turn);
         this.stones = 4;
-        this.nextPocket = createNextPocket(pocketNr + 1, firstPocket, beurt, owner);
+        this.nextPocket = createNextPocket(pocketNr + 1, firstPocket, owner, turn);
     }
 
     @Override
-    protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt, int owner){
+    protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, int owner, Player turn){
         return switch (nextNr) {
-            case 7, 14 -> new MancalaPocket(nextNr, firstPocket, beurt, owner);
-            default    -> new Pocket(nextNr, firstPocket, beurt, owner);
+            case 7, 14 -> new MancalaPocket(nextNr, firstPocket, owner, turn);
+            default    -> new Pocket(nextNr, firstPocket, owner, turn);
         };
     }
 
@@ -28,11 +28,7 @@ public class Pocket extends PocketAbstract {
     public void setMoveStones() {
         determineIfGameIsOver();
 
-        if (this.beurt.getWhichPlayerIsNow() == 0){
-            return;
-        }
-
-        boolean canPlay = this.beurt.isTurnOf(this.owner) && this.stones > 0;
+        boolean canPlay = this.turn.isTurnOfThisPlayer() && this.stones > 0;
 
         if (!canPlay) {
             throw new CanNotPlayThisPocket();
@@ -48,13 +44,13 @@ public class Pocket extends PocketAbstract {
         if (remainingStones > 0) {
             this.nextPocket.receiveStones(remainingStones);
         } else {
-            lastStoneInPocket(); // check voor slaan
-            this.beurt.setChangeBeurt(); // beurt wisselt
+            lastStoneInPocket();
+            this.turn.setChangeTurn();
         }
     }
 
     private void lastStoneInPocket() {
-        boolean isMyTurn = this.beurt.isTurnOf(this.owner);
+        boolean isMyTurn = this.turn.isTurnOfThisPlayer();
         if (this.stones == 1 && isMyTurn) {
             this.setStones(0);
 
@@ -71,13 +67,27 @@ public class Pocket extends PocketAbstract {
     }
 
     @Override
-    protected PocketAbstract findNeighborPocket(int pocketNr) {
-        return this.getPocketFinder(14 - pocketNr);
+    protected boolean isCurrentTurnSideEmpty() {
+        if (this.turn.isTurnOfThisPlayer()) {
+            boolean thisPocketIsEmpty = (this.stones == 0);
+            return thisPocketIsEmpty && this.nextPocket.isCurrentTurnSideEmpty();
+        }
+
+        return this.nextPocket.isCurrentTurnSideEmpty();
     }
 
-    private PocketAbstract findMyMancala() {
-        int targetMancalaNr = (this.owner == 1) ? 7 : 14;
-        return this.getPocketFinder(targetMancalaNr);
+    @Override
+    protected void clearAllSideStonesToMancalas() {
+        if (this.stones > 0) {
+            PocketAbstract myMancala = findMyMancala();
+            myMancala.setAddStones(this.stones);
+            this.stones = 0;
+        }
+        this.nextPocket.clearAllSideStonesToMancalas();
+    }
+
+    protected PocketAbstract findNeighborPocket(int pocketNr) {
+        return this.getPocketFinder(14 - pocketNr);
     }
 
     @Override
