@@ -7,7 +7,7 @@ import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 public abstract class PocketTemplate {
     private final int pocketNr;
-    int stones;
+    private int stones;
     private PocketTemplate nextPocket;
     private final Player turn;
 
@@ -61,17 +61,25 @@ public abstract class PocketTemplate {
     }
 
     void determineIfGameIsOver() {
-        int activePlayerStartNr = this.getTurn().isTurnOfThisPlayer() ? 1 : 8;
-        PocketTemplate activePlayerStartPocket = getPocketFinder(activePlayerStartNr);
-
-        if (activePlayerStartPocket.isSideEmpty()) {
+        if (this.isCurrentTurnSideEmpty(this)) {
             gameFinished();
         }
     }
 
-    abstract boolean isSideEmpty();
+    boolean isCurrentTurnSideEmpty(PocketTemplate startPocket) {
+        if (this.isTurnOfThisPlayer() && !this.isEmptyForGameEnd()) {
+            return false;
+        }
 
-    abstract boolean isCurrentTurnSideEmpty();
+        PocketTemplate next = this.getNextPocket();
+        if (next == startPocket) {
+            return true;
+        }
+
+        return next.isCurrentTurnSideEmpty(startPocket);
+    }
+
+    abstract boolean isEmptyForGameEnd();
 
     private void gameFinished() {
         clearAllSideStonesToMancalas();
@@ -96,13 +104,6 @@ public abstract class PocketTemplate {
 
     void setStones(int amount) {
         this.stones = amount;
-    }
-
-    PocketTemplate findMyMancala() {
-        if (this.nextPocket instanceof MancalaPocket) {
-            return this.nextPocket;
-        }
-        return this.nextPocket.findMyMancala();
     }
 
     public int getStonesAmount(){
@@ -140,5 +141,9 @@ public abstract class PocketTemplate {
         }
         return this.nextPocket.stepForward(steps - 1);
     }
+
+    protected abstract PocketTemplate countStepsToMancala(int steps);
+
+    abstract PocketTemplate findMyMancala();
 
 }

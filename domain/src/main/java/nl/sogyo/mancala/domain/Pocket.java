@@ -1,10 +1,8 @@
 package nl.sogyo.mancala.domain;
 
-import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 import java.util.List;
-
 
 public class Pocket extends PocketTemplate {
 
@@ -36,7 +34,7 @@ public class Pocket extends PocketTemplate {
         setNextPocket(next);
     }
     Pocket(int pocketNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones) {
-        super(pocketNr, turn, initialStones.get(pocketNr - 1)); // -1 vanwege 0-indexed List
+        super(pocketNr, turn, initialStones.get(pocketNr - 1));
 
         PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn, initialStones);
         setNextPocket(next);
@@ -55,11 +53,10 @@ public class Pocket extends PocketTemplate {
         determineIfGameIsOver();
         targetPocket.doMoveStones();
         determineIfGameIsOver();
-
     }
 
     private void doMoveStones() {
-        boolean canPlay = this.getTurn().isTurnOfThisPlayer() && this.getStonesAmount() > 0;
+        boolean canPlay = this.isTurnOfThisPlayer() && this.getStonesAmount() > 0;
 
         if (!canPlay) {
             throw new CanNotPlayThisPocket();
@@ -92,15 +89,12 @@ public class Pocket extends PocketTemplate {
     }
 
     @Override
-    boolean isSideEmpty() {
-        if (this.getStonesAmount() > 0) {
-            return false;
-        }
-        return this.getNextPocket().isSideEmpty();
+    boolean isEmptyForGameEnd() {
+        return this.getStonesAmount() == 0;
     }
 
     private void lastStoneInPocket() {
-        boolean isMyTurn = this.getTurn().isTurnOfThisPlayer();
+        boolean isMyTurn = this.isTurnOfThisPlayer();
         if (this.getStonesAmount() == 1 && isMyTurn) {
             this.setStones(0);
 
@@ -117,16 +111,6 @@ public class Pocket extends PocketTemplate {
     }
 
     @Override
-    boolean isCurrentTurnSideEmpty() {
-        if (this.getTurn().isTurnOfThisPlayer()) {
-            boolean thisPocketIsEmpty = (this.getStonesAmount() == 0);
-            return thisPocketIsEmpty && this.getNextPocket().isCurrentTurnSideEmpty();
-        }
-
-        return this.getNextPocket().isCurrentTurnSideEmpty();
-    }
-
-    @Override
     void clearAllSideStonesToMancalas() {
         if (this.getStonesAmount() > 0) {
             PocketTemplate myMancala = findMyMancala();
@@ -136,22 +120,19 @@ public class Pocket extends PocketTemplate {
         this.getNextPocket().clearAllSideStonesToMancalas();
     }
 
-    private void removeAllStones(){
-        this.stones = 0;
-    }
-
     Pocket findNeighborPocket() {
         return (Pocket) countStepsToMancala(0);
     }
 
-    private PocketTemplate countStepsToMancala(int steps) {
+    @Override
+    protected PocketTemplate countStepsToMancala(int steps) {
         PocketTemplate next = this.getNextPocket();
+        return next.countStepsToMancala(steps + 1);
+    }
 
-        if (next instanceof MancalaPocket) {
-            return next.stepForward(steps + 1);
-        }
-
-        return ((Pocket) next).countStepsToMancala(steps + 1);
+    @Override
+    PocketTemplate findMyMancala() {
+        return getNextPocket().findMyMancala();
     }
 
 }

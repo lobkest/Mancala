@@ -52,13 +52,8 @@ class MancalaPocket extends PocketTemplate  {
     }
 
     @Override
-    boolean isSideEmpty() {
-        return true;
-    }
-
-    @Override
     void receiveStones(int stonesPassedOn) {
-        if (this.getTurn().isTurnOfThisPlayer()) {
+        if (this.isTurnOfThisPlayer()) {
             depositStoneAndPass(stonesPassedOn);
         } else {
             this.getNextPocket().receiveStones(stonesPassedOn);
@@ -66,7 +61,7 @@ class MancalaPocket extends PocketTemplate  {
     }
 
     @Override
-    boolean isCurrentTurnSideEmpty() {
+    boolean isEmptyForGameEnd() {
         return true;
     }
 
@@ -77,5 +72,16 @@ class MancalaPocket extends PocketTemplate  {
         }
         this.getNextPocket().clearAllSideStonesToMancalas();
     }
+
+    @Override
+    protected PocketTemplate countStepsToMancala(int steps) {
+        return this.stepForward(steps);
+    }
+
+    @Override
+    PocketTemplate findMyMancala() {
+        return this;
+    }
+
 
 }
