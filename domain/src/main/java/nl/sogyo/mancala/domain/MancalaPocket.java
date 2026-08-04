@@ -4,6 +4,8 @@ package nl.sogyo.mancala.domain;
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
+import java.util.List;
+
 class MancalaPocket extends PocketTemplate  {
 
     MancalaPocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
@@ -23,16 +25,35 @@ class MancalaPocket extends PocketTemplate  {
         return new Pocket(nextNr, firstPocket, turnTwo);
     }
 
-//    @Override
-//    public void setMoveStones() {
-//        throw new CanNotPlayThisPocket();
-//    }
+    // constructors voor maken van custom board
+    MancalaPocket(int pocketNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones) {
+        super(pocketNr, turn, initialStones.get(pocketNr - 1));
+
+        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn, initialStones);
+        setNextPocket(next);
+    }
+    private PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turnOne, List<Integer> initialStones) {
+        if (nextNr == 15) {
+            return firstPocket;
+        }
+        Player turnTwo = new Player(turnOne);
+        turnOne.giveTurnTwo(turnTwo);
+        return new Pocket(nextNr, firstPocket, turnTwo, initialStones);
+    }
+    //
 
     @Override
     void passRemainingStones(int remainingStones) {
         if (remainingStones > 0) {
             this.getNextPocket().receiveStones(remainingStones);
+        }else {
+            determineIfGameIsOver();
         }
+    }
+
+    @Override
+    boolean isSideEmpty() {
+        return true;
     }
 
     @Override
@@ -46,10 +67,7 @@ class MancalaPocket extends PocketTemplate  {
 
     @Override
     boolean isCurrentTurnSideEmpty() {
-        if (this.getTurn().isTurnOfThisPlayer()) {
-            return true;
-        }
-        return this.getNextPocket().isCurrentTurnSideEmpty();
+        return true;
     }
 
     @Override

@@ -7,7 +7,7 @@ import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 public abstract class PocketTemplate {
     private final int pocketNr;
-    private int stones;
+    int stones;
     private PocketTemplate nextPocket;
     private final Player turn;
 
@@ -61,10 +61,15 @@ public abstract class PocketTemplate {
     }
 
     void determineIfGameIsOver() {
-        if (isCurrentTurnSideEmpty()) {
+        int activePlayerStartNr = this.getTurn().isTurnOfThisPlayer() ? 1 : 8;
+        PocketTemplate activePlayerStartPocket = getPocketFinder(activePlayerStartNr);
+
+        if (activePlayerStartPocket.isSideEmpty()) {
             gameFinished();
         }
     }
+
+    abstract boolean isSideEmpty();
 
     abstract boolean isCurrentTurnSideEmpty();
 
@@ -135,7 +140,5 @@ public abstract class PocketTemplate {
         }
         return this.nextPocket.stepForward(steps - 1);
     }
-
-//    public abstract void setMoveStones();
 
 }

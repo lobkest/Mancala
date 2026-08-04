@@ -3,6 +3,8 @@ package nl.sogyo.mancala.domain;
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
+import java.util.List;
+
 
 public class Pocket extends PocketTemplate {
 
@@ -27,29 +29,33 @@ public class Pocket extends PocketTemplate {
         };
     }
 
-//    @Override
-//    void setMoveStones() {
-//        determineIfGameIsOver();
-//
-//        boolean canPlay = this.getTurn().isTurnOfThisPlayer() && this.getStonesAmount() > 0;
-//
-//        if (!canPlay) {
-//            throw new CanNotPlayThisPocket();
-//        }
-//
-//        this.getNextPocket().receiveStones(this.getStonesAmount());
-//        setStones(0);
-//    }
+    // constructors voor maken van custom board [niet public; alleen voor testen]
+    Pocket(List<Integer> initialStones) {
+        super(1, new Player(), initialStones.get(0));
+        PocketTemplate next = createNextPocket(2, this, getTurn(), initialStones);
+        setNextPocket(next);
+    }
+    Pocket(int pocketNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones) {
+        super(pocketNr, turn, initialStones.get(pocketNr - 1)); // -1 vanwege 0-indexed List
 
-//    public void setMoveStones(int pocketNr) {
-//        PocketTemplate pocketFound = getPocketFinder(pocketNr);
-//        pocketFound.setMoveStones();
-//    }
+        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn, initialStones);
+        setNextPocket(next);
+    }
+    private PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones) {
+        return switch (nextNr) {
+            case 7, 14 -> new MancalaPocket(nextNr, firstPocket, turn, initialStones);
+            default    -> new Pocket(nextNr, firstPocket, turn, initialStones);
+        };
+    }
+
+    //
 
     public void setMoveStones(int pocketNr) {
         Pocket targetPocket = findPocket(pocketNr);
         determineIfGameIsOver();
         targetPocket.doMoveStones();
+        determineIfGameIsOver();
+
     }
 
     private void doMoveStones() {
@@ -65,15 +71,13 @@ public class Pocket extends PocketTemplate {
 
 
     Pocket findPocket(int targetPocketNr) {
-        // Find the requested pocket via the circular chain
-        PocketTemplate found = this.getPocketFinder(targetPocketNr);
+        PocketTemplate foundPocket = this.getPocketFinder(targetPocketNr);
 
-        // Validate that the target pocket is actually a Pocket and not a MancalaPocket
-        if (!(found instanceof Pocket)) {
+        if (!(foundPocket instanceof Pocket)) {
             throw new CanNotPlayThisPocket();
         }
 
-        return (Pocket) found;
+        return (Pocket) foundPocket;
     }
 
     @Override
@@ -83,7 +87,16 @@ public class Pocket extends PocketTemplate {
         } else {
             lastStoneInPocket();
             this.setChangeTurn();
+            determineIfGameIsOver();
         }
+    }
+
+    @Override
+    boolean isSideEmpty() {
+        if (this.getStonesAmount() > 0) {
+            return false;
+        }
+        return this.getNextPocket().isSideEmpty();
     }
 
     private void lastStoneInPocket() {
@@ -91,7 +104,6 @@ public class Pocket extends PocketTemplate {
         if (this.getStonesAmount() == 1 && isMyTurn) {
             this.setStones(0);
 
-//            PocketTemplate neighborPocket = findNeighborPocket(this.getPocketNr());
             Pocket neighborPocket = this.findNeighborPocket();
             PocketTemplate mancalaOwn = findMyMancala();
 
@@ -124,9 +136,9 @@ public class Pocket extends PocketTemplate {
         this.getNextPocket().clearAllSideStonesToMancalas();
     }
 
-//    PocketTemplate findNeighborPocket(int pocketNr) {
-//        return this.getPocketFinder(14 - pocketNr);
-//    }
+    private void removeAllStones(){
+        this.stones = 0;
+    }
 
     Pocket findNeighborPocket() {
         return (Pocket) countStepsToMancala(0);
@@ -135,12 +147,10 @@ public class Pocket extends PocketTemplate {
     private PocketTemplate countStepsToMancala(int steps) {
         PocketTemplate next = this.getNextPocket();
 
-        // Als het volgende vakje de Mancala is, stap vanaf de Mancala (steps + 1) keer verder
         if (next instanceof MancalaPocket) {
             return next.stepForward(steps + 1);
         }
 
-        // Anders is het nog een Pocket, tel 1 stap erbij en zoek verder
         return ((Pocket) next).countStepsToMancala(steps + 1);
     }
 
