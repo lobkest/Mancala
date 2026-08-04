@@ -18,7 +18,7 @@ public class MancalaView {
         this.controller = controller;
     }
 
-    public void initAndShow() {
+    public void initializeAndShow() {
         frame = new Frame("Mancala Game");
         frame.setLayout(new BorderLayout());
 
@@ -117,12 +117,6 @@ public class MancalaView {
     private void updateDisplay() {
         int[] stones = controller.getBoardStones();
 
-//        for (int i = 0; i < 14; i++) {
-//            String text = (i == 6 || i == 13)
-//                    ? "<html><center><b>Kalaha " + (i + 1) + "</b><br/><br/>" + stones[i] + " stones</center></html>"
-//                    : "<html><center>Pocket " + (i + 1) + "<br/>" + stones[i] + " stones</center></html>";
-//            pocketLabels[i].setText(text);
-//        }
         for (int i = 0; i < 14; i++) {
             String name = (i == 6 || i == 13) ? "Kalaha " : "Pocket ";
             pocketLabels[i].setText(name + (i + 1) + ": " + stones[i] + " stones");

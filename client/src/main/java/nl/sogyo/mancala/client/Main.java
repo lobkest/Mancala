@@ -5,6 +5,6 @@ public class Main {
         GameController controller = new GameController();
         MancalaView view = new MancalaView(controller);
 
-        view.initAndShow();
+        view.initializeAndShow();
     }
 }

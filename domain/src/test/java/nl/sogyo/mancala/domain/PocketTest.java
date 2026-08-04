@@ -86,7 +86,8 @@ public class PocketTest {
     public void testMoveStonesFromFirstPocketThenStonesIsZero() {
         Pocket pocket = new Pocket();
         PocketTemplate pocketFound = pocket.getPocketFinder(1);
-        pocketFound.setMoveStones();
+//        pocketFound.setMoveStones();
+        pocket.setMoveStones(1);
         assertEquals(0, pocketFound.getStonesAmount());
     }
 
@@ -94,8 +95,9 @@ public class PocketTest {
     @ValueSource(ints = {2, 3, 4, 5})
     public void testMoveStonesFromFirstPocketThenNextPocketsAreFiveStones(int nextPocketWithFiveStones) {
         Pocket pocket = new Pocket();
-        PocketTemplate FirstPocket = pocket.getPocketFinder(1);
-        FirstPocket.setMoveStones();
+//        PocketTemplate FirstPocket = pocket.getPocketFinder(1);
+//        FirstPocket.setMoveStones();
+        pocket.setMoveStones(1);
         PocketTemplate nextPockets = pocket.getPocketFinder(nextPocketWithFiveStones);
         assertEquals(5, nextPockets.getStonesAmount());
     }
@@ -104,8 +106,9 @@ public class PocketTest {
     @ValueSource(ints = {6, 8, 9, 10, 11, 12, 13})
     public void testMoveStonesFromFirstPocketThenAllOtherPocketsAreStillFourStonesExceptTwoToFive(int nextPocketWithFiveStones) {
         Pocket pocket = new Pocket();
-        PocketTemplate FirstPocket = pocket.getPocketFinder(1);
-        FirstPocket.setMoveStones();
+//        PocketTemplate FirstPocket = pocket.getPocketFinder(1);
+//        FirstPocket.setMoveStones();
+        pocket.setMoveStones(1);
         PocketTemplate nextPockets = pocket.getPocketFinder(nextPocketWithFiveStones);
         assertEquals(4, nextPockets.getStonesAmount());
     }
@@ -114,8 +117,9 @@ public class PocketTest {
     @ValueSource(ints = {7, 14})
     public void testMoveStonesFromFirstPocketThenBothMancalasAreStillZeroStones(int nextPocketWithFiveStones) {
         Pocket pocket = new Pocket();
-        PocketTemplate FirstPocket = pocket.getPocketFinder(1);
-        FirstPocket.setMoveStones();
+//        PocketTemplate FirstPocket = pocket.getPocketFinder(1);
+//        FirstPocket.setMoveStones();
+        pocket.setMoveStones(1);
         PocketTemplate nextPockets = pocket.getPocketFinder(nextPocketWithFiveStones);
         assertEquals(0, nextPockets.getStonesAmount());
     }
@@ -125,8 +129,9 @@ public class PocketTest {
             , "14, 0", "1, 4", "2, 4", "3, 4", "4, 4", "5, 4"})
     public void testMoveStonesFromSixthPocketAndCheckStonesInAllOtherPockets(int nextPocketToCheck, int stones) {
         Pocket pocket = new Pocket();
-        PocketTemplate SixthPocket = pocket.getPocketFinder(6);
-        SixthPocket.setMoveStones();
+//        PocketTemplate SixthPocket = pocket.getPocketFinder(6);
+//        SixthPocket.setMoveStones();
+        pocket.setMoveStones(6);
         PocketTemplate nextPockets = pocket.getPocketFinder(nextPocketToCheck);
         assertEquals(nextPockets.getStonesAmount(), stones);
     }
@@ -136,7 +141,8 @@ public class PocketTest {
     public void testPlayerOneCanPlayPocketOneToSix(int pocketNr) {
         Pocket pocket = new Pocket();
         PocketTemplate PocketFound = pocket.getPocketFinder(pocketNr);
-        PocketFound.setMoveStones();
+//        PocketFound.setMoveStones();
+        pocket.setMoveStones(pocketNr);
 
         assertEquals(0, PocketFound.getStonesAmount());
     }
@@ -145,9 +151,8 @@ public class PocketTest {
     @ValueSource(ints = {8, 9, 10, 11, 12, 13})
     public void testPlayerOneCanNotPlayPocketEightToThirteen(int pocketNr) {
         Pocket pocket = new Pocket();
-        PocketTemplate PocketFound = pocket.getPocketFinder(pocketNr);
 
-        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+        assertThrows(CanNotPlayThisPocket.class, () -> pocket.setMoveStones(pocketNr));
     }
 
     @ParameterizedTest
@@ -157,7 +162,9 @@ public class PocketTest {
         PocketTemplate PocketFound = pocket.getPocketFinder(pocketNr);
         PocketFound.setChangeTurn();
 
-        PocketFound.setMoveStones();
+//        PocketFound.setMoveStones();
+        pocket.setMoveStones(pocketNr);
+
         assertEquals(0, PocketFound.getStonesAmount());
     }
 
@@ -168,7 +175,7 @@ public class PocketTest {
         PocketTemplate PocketFound = pocket.getPocketFinder(pocketNr);
         PocketFound.setChangeTurn();
 
-        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+        assertThrows(CanNotPlayThisPocket.class, () -> pocket.setMoveStones(pocketNr));
     }
 
     @ParameterizedTest
@@ -177,7 +184,7 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         PocketTemplate PocketFound = pocket.getPocketFinder(mancalaNr);
 
-        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+        assertThrows(CanNotPlayThisPocket.class, () -> pocket.setMoveStones(mancalaNr));
     }
 
     @ParameterizedTest
@@ -187,7 +194,7 @@ public class PocketTest {
         PocketTemplate PocketFound = pocket.getPocketFinder(mancalaNr);
         PocketFound.setChangeTurn();
 
-        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+        assertThrows(CanNotPlayThisPocket.class, () -> pocket.setMoveStones(mancalaNr));
     }
 
     @ParameterizedTest
@@ -196,15 +203,15 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         PocketTemplate PocketFound = pocket.getPocketFinder(mancalaNr);
         PocketFound.setChangeTurn();
-        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+        assertThrows(CanNotPlayThisPocket.class, () -> pocket.setMoveStones(mancalaNr));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {7, 14})
     public void testPlayerOneCanoNotMoveStonesOfMancalas(int mancalaNr) {
         Pocket pocket = new Pocket();
-        PocketTemplate PocketFound = pocket.getPocketFinder(mancalaNr);
-        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+//        PocketTemplate PocketFound = pocket.getPocketFinder(mancalaNr);
+        assertThrows(CanNotPlayThisPocket.class, () -> pocket.setMoveStones(mancalaNr));
     }
 
     @ParameterizedTest
@@ -213,15 +220,15 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         PocketTemplate PocketFound = pocket.getPocketFinder(pocketNr);
         PocketFound.setChangeTurn();
-        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+        assertThrows(CanNotPlayThisPocket.class, () -> pocket.setMoveStones(pocketNr));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {8, 9, 10, 11, 12, 13})
     public void testPlayerOneCanNotMoveStonesFromPocketEightToThirteen(int pocketNr) {
         Pocket pocket = new Pocket();
-        PocketTemplate PocketFound = pocket.getPocketFinder(pocketNr);
-        assertThrows(CanNotPlayThisPocket.class, PocketFound::setMoveStones);
+//        PocketTemplate PocketFound = pocket.getPocketFinder(pocketNr);
+        assertThrows(CanNotPlayThisPocket.class, () -> pocket.setMoveStones(pocketNr));
     }
 
     @ParameterizedTest
@@ -275,10 +282,14 @@ public class PocketTest {
     public void testLastStoneInOwnEmptyPocketMeansGettingThemToMancalaPlusNeighbor() {
         Pocket pocket = new Pocket();
         PocketTemplate PocketSix = pocket.getPocketFinder(6);
-        PocketSix.setMoveStones();
+//        PocketSix.setMoveStones();
+        pocket.setMoveStones(6);
+
         PocketSix.setChangeTurn();
-        PocketTemplate PocketTwo = pocket.getPocketFinder(2);
-        PocketTwo.setMoveStones();
+//        PocketTemplate PocketTwo = pocket.getPocketFinder(2);
+//        PocketTwo.setMoveStones();
+        pocket.setMoveStones(2);
+
 
         assertEquals(0, PocketSix.getStonesAmount());
         PocketTemplate PocketMancalaSeven = pocket.getPocketFinder(7);
@@ -292,10 +303,13 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         pocket.setChangeTurn();
         PocketTemplate PocketTwelve = pocket.getPocketFinder(12);
-        PocketTwelve.setMoveStones();
+//        PocketTwelve.setMoveStones();
+        pocket.setMoveStones(12);
+
         PocketTwelve.setChangeTurn();
-        PocketTemplate PocketEight = pocket.getPocketFinder(8);
-        PocketEight.setMoveStones();
+//        PocketTemplate PocketEight = pocket.getPocketFinder(8);
+//        PocketEight.setMoveStones();
+        pocket.setMoveStones(8);
 
         assertEquals(0, PocketTwelve.getStonesAmount());
         PocketTemplate PocketMancalaFourteen = pocket.getPocketFinder(14);
@@ -308,7 +322,7 @@ public class PocketTest {
     public void testSkipOtherPlayersMancala() {
         Pocket pocket = new Pocket();
         pocket.setStones(14);
-        pocket.setMoveStones();
+        pocket.setMoveStones(1);
 
         PocketTemplate PocketTwo = pocket.getPocketFinder(2);
         PocketTemplate PocketMancalaTwo = pocket.getPocketFinder(14);
@@ -321,7 +335,8 @@ public class PocketTest {
     public void testLastStoneInOwnMancalaThenICanGoAgain() {
         Pocket pocket = new Pocket();
         PocketTemplate PocketThree = pocket.getPocketFinder(3);
-        PocketThree.setMoveStones();
+//        PocketThree.setMoveStones();
+        pocket.setMoveStones(3);
         assertTrue(PocketThree.isTurnOfThisPlayer());
 
     }
@@ -330,7 +345,8 @@ public class PocketTest {
     public void testLastStoneInAnyOtherPocketBesideMancalaThenICanNotGoAgain() {
         Pocket pocket = new Pocket();
         PocketTemplate PocketFour = pocket.getPocketFinder(4);
-        PocketFour.setMoveStones();
+//        PocketFour.setMoveStones();
+        pocket.setMoveStones(4);
         assertFalse(PocketFour.isTurnOfThisPlayer());
     }
 
@@ -339,8 +355,9 @@ public class PocketTest {
         Pocket pocket = new Pocket();
         PocketTemplate PocketTen = pocket.getPocketFinder(10);
         PocketTen.setStones(0);
-        PocketTemplate PocketSix = pocket.getPocketFinder(6);
-        PocketSix.setMoveStones();
+//        PocketTemplate PocketSix = pocket.getPocketFinder(6);
+//        PocketSix.setMoveStones();
+        pocket.setMoveStones(6);
         PocketTemplate PocketFour = pocket.getPocketFinder(4);
 
         assertEquals(4, PocketFour.getStonesAmount());
@@ -363,7 +380,7 @@ public class PocketTest {
         PocketFive.setStones(0);
         PocketSix.setStones(0);
 
-        assertThrows(GameOver.class, PocketSix::setMoveStones);
+        assertThrows(GameOver.class,  () -> pocket.setMoveStones(6));
     }
 
     @Test
@@ -383,7 +400,7 @@ public class PocketTest {
         PocketFive.setStones(0);
         PocketSix.setStones(0);
 
-        assertThrows(GameOver.class, PocketSix::setMoveStones);
+        assertThrows(GameOver.class, () -> pocket.setMoveStones(6));
         assertEquals(2, pocket.getWhoIsTheWinner());
     }
 
@@ -406,7 +423,7 @@ public class PocketTest {
             currentPocket.setStones(0);
         }
 
-        assertThrows(GameOver.class, pocket::setMoveStones);
+        assertThrows(GameOver.class, () -> pocket.setMoveStones(1));
         assertEquals(0, pocket.getWhoIsTheWinner());
     }
 
@@ -431,7 +448,7 @@ public class PocketTest {
 
         pocket.setChangeTurn();
 
-        assertThrows(GameOver.class, pocket::setMoveStones);
+        assertThrows(GameOver.class, () -> pocket.setMoveStones(1));
         assertEquals(1, pocket.getWhoIsTheWinner());
     }
 
@@ -454,17 +471,18 @@ public class PocketTest {
             currentPocket.setStones(2);
         }
 
-        assertThrows(GameOver.class, pocket::setMoveStones);
+        assertThrows(GameOver.class, () -> pocket.setMoveStones(1));
         assertEquals(2, pocket.getWhoIsTheWinner());
     }
 
     @Test
-    public void testPlayerOneSkipsPlayerTwoMancalaOnLargeSow() {
+    public void testPlayerOneSkipsPlayerTwoMancala() {
         Pocket pocket = new Pocket();
         PocketTemplate pocketOne = pocket.getPocketFinder(1);
         pocketOne.setStones(14);
 
-        pocketOne.setMoveStones();
+//        pocketOne.setMoveStones();
+        pocket.setMoveStones(1);
 
         PocketTemplate MancalaOne = pocket.getPocketFinder(7);
         PocketTemplate MancalaTwo = pocket.getPocketFinder(14);
@@ -479,7 +497,7 @@ public class PocketTest {
         PocketTemplate pocketOne = pocket.getPocketFinder(1);
         pocketOne.setStones(0);
 
-        assertThrows(CanNotPlayThisPocket.class, pocketOne::setMoveStones);
+        assertThrows(CanNotPlayThisPocket.class,  () -> pocket.setMoveStones(1));
         assertTrue(pocketOne.isTurnOfThisPlayer(), "Turn should remain with player one after an invalid move attempt.");
     }
 
@@ -492,7 +510,8 @@ public class PocketTest {
         pocketSix.setStones(3);
         pocketNine.setStones(0);
 
-        pocketSix.setMoveStones();
+//        pocketSix.setMoveStones();
+        pocket.setMoveStones(6);
 
         assertEquals(1, pocketNine.getStonesAmount(), "Stone should remain in P2's pocket.");
         assertEquals(1, pocket.getPocketFinder(7).getStonesAmount(), "P1 Mancala should not gain more than 1 stone.");
@@ -550,9 +569,10 @@ public class PocketTest {
         PocketTemplate pocketEight = pocket.getPocketFinder(8);
         pocketEight.setStones(10);
 
-        pocketSix.setMoveStones();
+//        pocketSix.setMoveStones();
+        pocket.setMoveStones(6);
 
-        assertThrows(GameOver.class, pocketSix::setMoveStones);
+        assertThrows(GameOver.class,  () -> pocket.setMoveStones(6));
 
         PocketTemplate mancalaTwo = pocket.getPocketFinder(14);
         assertEquals(30, mancalaTwo.getStonesAmount(), "Remaining stones of player two should be moved to their mancala.");
@@ -593,9 +613,7 @@ public class PocketTest {
             pocket.getPocketFinder(i).setStones(0);
         }
 
-        assertThrows(GameOver.class, () -> {
-            pocket.getPocketFinder(8).setMoveStones();
-        });
+        assertThrows(GameOver.class,  () -> pocket.setMoveStones(8));
     }
 
     @Test
@@ -624,8 +642,6 @@ public class PocketTest {
             pocket.getPocketFinder(i).setStones(0);
         }
 
-        assertThrows(GameOver.class, () -> {
-            pocket.getPocketFinder(8).setMoveStones();
-        });
+        assertThrows(GameOver.class,  () -> pocket.setMoveStones(8));
     }
 }

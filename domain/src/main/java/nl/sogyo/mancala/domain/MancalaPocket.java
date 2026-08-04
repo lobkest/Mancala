@@ -4,7 +4,7 @@ package nl.sogyo.mancala.domain;
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
-public class MancalaPocket extends PocketTemplate  {
+class MancalaPocket extends PocketTemplate  {
 
     MancalaPocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
         super(pocketNr, turn, 0);
@@ -23,10 +23,10 @@ public class MancalaPocket extends PocketTemplate  {
         return new Pocket(nextNr, firstPocket, turnTwo);
     }
 
-    @Override
-    public void setMoveStones() {
-        throw new CanNotPlayThisPocket();
-    }
+//    @Override
+//    public void setMoveStones() {
+//        throw new CanNotPlayThisPocket();
+//    }
 
     @Override
     void passRemainingStones(int remainingStones) {
@@ -54,7 +54,7 @@ public class MancalaPocket extends PocketTemplate  {
 
     @Override
     void clearAllSideStonesToMancalas() {
-        if (this.getPocketNr() == 14) {
+        if (this.getNextPocket().getPocketNr() == 1) {
             return;
         }
         this.getNextPocket().clearAllSideStonesToMancalas();

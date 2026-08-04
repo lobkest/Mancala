@@ -16,10 +16,6 @@ public class GameController {
         return this.pocket.getWhoseTurnIsIt();
     }
 
-    /**
-     * Voert een zet uit.
-     * Geeft null terug als de zet gelukt is, of de foutmelding als string als er iets misgaat.
-     */
     public String makeMove(int playerPocketChoice) throws GameOver {
         int actualPocket = playerPocketChoice;
         if (getCurrentTurn() == 2) {
@@ -28,7 +24,7 @@ public class GameController {
 
         try {
             this.pocket.setMoveStones(actualPocket);
-            return null; // Geen foutmelding, zet is gelukt!
+            return null;
         } catch (CanNotPlayThisPocket e) {
             return "Invalid move! Player " + getCurrentTurn() + ", please choose a different pocket.";
         }
@@ -38,9 +34,6 @@ public class GameController {
         return this.pocket.getWhoIsTheWinner();
     }
 
-    /**
-     * Haalt het aantal stenen per pocket op in een simpele int-array van 14 lang.
-     */
     public int[] getBoardStones() {
         int[] stones = new int[14];
         if (this.pocket == null) return stones;

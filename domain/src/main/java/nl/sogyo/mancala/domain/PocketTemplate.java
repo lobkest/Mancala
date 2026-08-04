@@ -129,6 +129,13 @@ public abstract class PocketTemplate {
         this.stones += amount;
     }
 
-    public abstract void setMoveStones();
+    PocketTemplate stepForward(int steps) {
+        if (steps == 0) {
+            return this;
+        }
+        return this.nextPocket.stepForward(steps - 1);
+    }
+
+//    public abstract void setMoveStones();
 
 }
