@@ -1,7 +1,6 @@
 package nl.sogyo.mancala.domain;
 
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
-import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 import java.util.List;
 
@@ -11,12 +10,6 @@ abstract class PocketTemplate {
     private int stones;
     private PocketTemplate nextPocket;
     private final Player turn;
-
-//    PocketTemplate() {
-//        this.pocketNr = 1;
-//        this.turn = new Player();
-//        this.stones = 4;
-//    }
 
     PocketTemplate(int pocketNr, Player turn, int stones) {
         this.pocketNr = pocketNr;
@@ -64,7 +57,7 @@ abstract class PocketTemplate {
 
     void determineIfGameIsOver() {
         if (this.isCurrentTurnSideEmpty(this)) {
-            gameFinished();
+            finishGame();
         }
     }
 
@@ -83,10 +76,9 @@ abstract class PocketTemplate {
 
     abstract boolean isEmptyForGameEnd();
 
-    private void gameFinished() {
+    private void finishGame() {
         clearAllSideStonesToMancalas();
         this.turn.setGameOver();
-//        throw new GameOver();
     }
 
     abstract void clearAllSideStonesToMancalas();
@@ -94,12 +86,12 @@ abstract class PocketTemplate {
     int getWhoIsTheWinner(){
         PocketTemplate PlayerOne = getPocketFinder(1);
         PocketTemplate PlayerTwo = getPocketFinder(8);
-        int scorePlayerOne = PlayerOne.getWhatIsTheScore();
-        int scorePlayerTwo = PlayerTwo.getWhatIsTheScore();
+        int scorePlayerOne = PlayerOne.calculateScore();
+        int scorePlayerTwo = PlayerTwo.calculateScore();
         return (scorePlayerOne > scorePlayerTwo) ? 1 : (scorePlayerTwo > scorePlayerOne) ? 2 : 0;
     }
 
-    private int getWhatIsTheScore(){
+    private int calculateScore(){
         PocketTemplate myMancala = findMyMancala();
         return myMancala.getStonesAmount();
     }
@@ -112,17 +104,13 @@ abstract class PocketTemplate {
         return this.stones;
     }
 
-    Player getTurn(){
-        return this.turn;
-    }
-
     boolean isTurnOfThisPlayer(){
         return this.turn.isTurnOfThisPlayer();
     }
 
-    // just for client for now
-    int getWhoseTurnIsIt(){
-        return this.isTurnOfThisPlayer() ? 1 : 2;
+    public boolean isPocketOfCurrentPlayer(int targetPocketNr) {
+        PocketTemplate targetPocket = getPocketFinder(targetPocketNr);
+        return targetPocket.isTurnOfThisPlayer();
     }
 
     int getPocketNr(){
@@ -136,10 +124,6 @@ abstract class PocketTemplate {
     void setAddStones(int amount){
         this.stones += amount;
     }
-
-//    boolean isGameOver() {
-//        return !this.turn.isTurnOfThisPlayer() && !this.getNextPocket().getTurn().isTurnOfThisPlayer();
-//    }
 
     boolean isPlayable() {
         return this.isTurnOfThisPlayer() && this.getStonesAmount() > 0;
@@ -164,7 +148,7 @@ abstract class PocketTemplate {
         return this.nextPocket.stepForward(steps - 1);
     }
 
-    protected abstract PocketTemplate countStepsToMancala(int steps);
+    abstract PocketTemplate countStepsToMancala(int steps);
 
     abstract PocketTemplate findMyMancala();
 

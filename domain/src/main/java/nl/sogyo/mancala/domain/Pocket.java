@@ -6,12 +6,6 @@ import java.util.List;
 
 class Pocket extends PocketTemplate {
 
-//    Pocket() {
-//        super();
-//        PocketTemplate next = createNextPocket(2, this, getTurn());
-//        setNextPocket(next);
-//    }
-
     Pocket() {
         this(List.of(
                 4, 4, 4, 4, 4, 4, 0,
@@ -19,27 +13,16 @@ class Pocket extends PocketTemplate {
         ));
     }
 
-//    Pocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
-//        super(pocketNr, turn, 4);
-//
-//        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn);
-//        setNextPocket(next);
-//    }
-//
-//    @Override
-//    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn) {
-//        return switch (nextNr) {
-//            case 7, 14 -> new MancalaPocket(nextNr, firstPocket, turn);
-//            default    -> new Pocket(nextNr, firstPocket, turn);
-//        };
-//    }
-
-    // constructors voor maken van custom board [niet public; alleen voor testen]
     Pocket(List<Integer> initialStones) {
-        super(1, new Player(), initialStones.get(0));
-        PocketTemplate next = createNextPocket(2, this, getTurn(), initialStones);
+        this(new Player(), initialStones);
+    }
+
+    private Pocket(Player firstPlayer, List<Integer> initialStones) {
+        super(1, firstPlayer, initialStones.get(0));
+        PocketTemplate next = createNextPocket(2, this, firstPlayer, initialStones);
         setNextPocket(next);
     }
+
     Pocket(int pocketNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones) {
         super(pocketNr, turn, initialStones.get(pocketNr - 1));
 
@@ -54,8 +37,6 @@ class Pocket extends PocketTemplate {
             default    -> new Pocket(nextNr, firstPocket, turn, initialStones);
         };
     }
-
-    //
 
     void setMoveStones(int pocketNr) {
         Pocket targetPocket = findPocket(pocketNr);
@@ -76,7 +57,7 @@ class Pocket extends PocketTemplate {
     }
 
 
-    Pocket findPocket(int targetPocketNr) {
+    private Pocket findPocket(int targetPocketNr) {
         PocketTemplate foundPocket = this.getPocketFinder(targetPocketNr);
 
         if (!(foundPocket instanceof Pocket)) {
@@ -107,15 +88,15 @@ class Pocket extends PocketTemplate {
         if (this.getStonesAmount() == 1 && isMyTurn) {
             this.setStones(0);
 
-            Pocket neighborPocket = this.findNeighborPocket();
+            Pocket oppositePocket = this.findOppositePocket();
             PocketTemplate mancalaOwn = findMyMancala();
 
-            int neighborPocketStonesAmount = neighborPocket.getStonesAmount();
+            int oppositePocketStonesAmount = oppositePocket.getStonesAmount();
 
-            mancalaOwn.setAddStones(neighborPocketStonesAmount);
+            mancalaOwn.setAddStones(oppositePocketStonesAmount);
             mancalaOwn.setAddStones(1);
 
-            neighborPocket.setStones(0);
+            oppositePocket.setStones(0);
         }
     }
 
@@ -129,12 +110,12 @@ class Pocket extends PocketTemplate {
         this.getNextPocket().clearAllSideStonesToMancalas();
     }
 
-    Pocket findNeighborPocket() {
+    private Pocket findOppositePocket() {
         return (Pocket) countStepsToMancala(0);
     }
 
     @Override
-    protected PocketTemplate countStepsToMancala(int steps) {
+    PocketTemplate countStepsToMancala(int steps) {
         PocketTemplate next = this.getNextPocket();
         return next.countStepsToMancala(steps + 1);
     }

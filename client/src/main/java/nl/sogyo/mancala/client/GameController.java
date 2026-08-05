@@ -6,16 +6,28 @@ import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 public class GameController {
     private final Facade facade;
 
+    // Definieer de representatieve vakjes van beide spelers in de controller
+    private static final int PLAYER_1_CHECK_POCKET = 1;
+    private static final int PLAYER_2_CHECK_POCKET = 8;
+
+
     public GameController() {
         this.facade = new Facade();
     }
 
-    public void startNewGame() {
-        this.facade.startGame();
+    public int getCurrentTurn() {
+        if (this.facade.isPocketOfCurrentPlayer(PLAYER_1_CHECK_POCKET)) {
+            return 1;
+        }
+        if (this.facade.isPocketOfCurrentPlayer(PLAYER_2_CHECK_POCKET)) {
+            return 2;
+        }
+        return 0; // Game over of geen spel gestart
     }
 
-    public int getCurrentTurn() {
-        return this.facade.getCurrentTurn();
+
+    public void startNewGame() {
+        this.facade.startGame();
     }
 
     public String makeMove(int playerPocketChoice) {

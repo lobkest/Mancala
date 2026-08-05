@@ -1,35 +1,35 @@
 package nl.sogyo.mancala.domain;
 
 class Player {
-    private boolean turnOfPlayer;
+    private boolean isTurnOfPlayer;
     private Player otherTurn;
 
     Player() {
-        this.turnOfPlayer = true;
+        this.isTurnOfPlayer = true;
     }
 
     Player(Player turn) {
-        this.turnOfPlayer = !turn.isTurnOfThisPlayer();
+        this.isTurnOfPlayer = !turn.isTurnOfThisPlayer();
         this.otherTurn = turn;
     }
 
-    protected boolean isTurnOfThisPlayer() {
-        return this.turnOfPlayer;
+    boolean isTurnOfThisPlayer() {
+        return this.isTurnOfPlayer;
     }
 
-    protected void setChangeTurn() {
-        boolean currentState = this.turnOfPlayer;
-        this.turnOfPlayer = !currentState;
-        this.otherTurn.turnOfPlayer = currentState;
+    void setChangeTurn() {
+        boolean currentState = this.isTurnOfPlayer;
+        this.isTurnOfPlayer = !currentState;
+        this.otherTurn.isTurnOfPlayer = currentState;
     }
 
-    protected void giveTurnTwo(Player turnTwo) {
+    void giveTurnTwo(Player turnTwo) {
         this.otherTurn = turnTwo;
     }
 
-    protected void setGameOver() {
-        this.turnOfPlayer = false;
-        if (this.otherTurn.turnOfPlayer) {
+    void setGameOver() {
+        this.isTurnOfPlayer = false;
+        if (this.otherTurn.isTurnOfPlayer) {
             this.otherTurn.setGameOver();
         }
     }

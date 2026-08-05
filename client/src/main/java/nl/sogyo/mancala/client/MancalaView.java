@@ -19,7 +19,7 @@ public class MancalaView {
         frame = new Frame("Mancala Game");
         frame.setLayout(new BorderLayout());
 
-        statusLabel = new Label("Welkom bij Mancala!", Label.CENTER);
+        statusLabel = new Label("Welcome to Mancala!", Label.CENTER);
         Button buttonStart = new Button("Start Game");
         buttonStart.addActionListener(e -> startGame());
 
@@ -124,9 +124,8 @@ public class MancalaView {
         boolean[] playable = controller.getPlayablePockets();
         int currentTurn = controller.getCurrentTurn();
 
-        // Update Kalaha's (indices 6 en 13)
-        ((Label) boardComponents[6]).setText("Kalaha 7: " + stones[6] + " stones");
-        ((Label) boardComponents[13]).setText("Kalaha 14: " + stones[13] + " stones");
+        ((Label) boardComponents[6]).setText("Kalaha: " + stones[6] + " stones");
+        ((Label) boardComponents[13]).setText("Kalaha: " + stones[13] + " stones");
 
         // Update speelbare pockets
         updatePocketView(0, stones, playable);
@@ -141,7 +140,8 @@ public class MancalaView {
 
         if (index != 6 && index != 13) {
             Button btn = (Button) boardComponents[index];
-            btn.setLabel("Pocket " + (index + 1) + ": " + stones[index] + " stones");
+//            btn.setLabel("Pocket " + (index + 1) + ": " + stones[index] + " stones");
+            btn.setLabel(stones[index] + " stones");
 
             boolean isPlayable = playable[index];
             btn.setEnabled(isPlayable);

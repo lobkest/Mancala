@@ -38,13 +38,14 @@ public class Facade {
         return (index == 13) ? stones : collectStones(current.getNextPocket(), index + 1, stones);
     }
 
-    public int getCurrentTurn() {
-        if (this.pocket == null) return 1;
-        return this.pocket.getWhoseTurnIsIt();
-    }
-
     public int getWinner() {
         if (this.pocket == null) return 0;
         return this.pocket.getWhoIsTheWinner();
     }
+
+    public boolean isPocketOfCurrentPlayer(int pocketNr) {
+        if (this.pocket == null) return false;
+        return this.pocket.isPocketOfCurrentPlayer(pocketNr);
+    }
+
 }
