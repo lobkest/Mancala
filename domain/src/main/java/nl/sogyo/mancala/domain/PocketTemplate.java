@@ -1,8 +1,9 @@
 package nl.sogyo.mancala.domain;
 
-import nl.sogyo.mancala.domain.exceptions.GameOver;
 import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
+
+import java.util.List;
 
 
 abstract class PocketTemplate {
@@ -11,11 +12,11 @@ abstract class PocketTemplate {
     private PocketTemplate nextPocket;
     private final Player turn;
 
-    PocketTemplate() {
-        this.pocketNr = 1;
-        this.turn = new Player();
-        this.stones = 4;
-    }
+//    PocketTemplate() {
+//        this.pocketNr = 1;
+//        this.turn = new Player();
+//        this.stones = 4;
+//    }
 
     PocketTemplate(int pocketNr, Player turn, int stones) {
         this.pocketNr = pocketNr;
@@ -31,7 +32,8 @@ abstract class PocketTemplate {
         return this.nextPocket;
     }
 
-    abstract PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn);
+
+    abstract PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones);
 
     PocketTemplate getPocketFinder(int i) {
         return getPocketFinder(i, this);

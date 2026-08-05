@@ -8,22 +8,22 @@ import java.util.List;
 
 class MancalaPocket extends PocketTemplate  {
 
-    MancalaPocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
-        super(pocketNr, turn, 0);
-
-        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn);
-        setNextPocket(next);
-    }
-
-    @Override
-    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turnOne) {
-        if (nextNr == 15) {
-            return firstPocket;
-        }
-        Player turnTwo = new Player(turnOne);
-        turnOne.giveTurnTwo(turnTwo);
-        return new Pocket(nextNr, firstPocket, turnTwo);
-    }
+//    MancalaPocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
+//        super(pocketNr, turn, 0);
+//
+//        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn);
+//        setNextPocket(next);
+//    }
+//
+//    @Override
+//    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turnOne) {
+//        if (nextNr == 15) {
+//            return firstPocket;
+//        }
+//        Player turnTwo = new Player(turnOne);
+//        turnOne.giveTurnTwo(turnTwo);
+//        return new Pocket(nextNr, firstPocket, turnTwo);
+//    }
 
     // constructors voor maken van custom board
     MancalaPocket(int pocketNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones) {
@@ -32,7 +32,9 @@ class MancalaPocket extends PocketTemplate  {
         PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn, initialStones);
         setNextPocket(next);
     }
-    private PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turnOne, List<Integer> initialStones) {
+
+    @Override
+    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turnOne, List<Integer> initialStones) {
         if (nextNr == 15) {
             return firstPocket;
         }

@@ -6,26 +6,33 @@ import java.util.List;
 
 class Pocket extends PocketTemplate {
 
+//    Pocket() {
+//        super();
+//        PocketTemplate next = createNextPocket(2, this, getTurn());
+//        setNextPocket(next);
+//    }
+
     Pocket() {
-        super();
-        PocketTemplate next = createNextPocket(2, this, getTurn());
-        setNextPocket(next);
+        this(List.of(
+                4, 4, 4, 4, 4, 4, 0,
+                4, 4, 4, 4, 4, 4, 0
+        ));
     }
 
-    Pocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
-        super(pocketNr, turn, 4);
-
-        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn);
-        setNextPocket(next);
-    }
-
-    @Override
-    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn) {
-        return switch (nextNr) {
-            case 7, 14 -> new MancalaPocket(nextNr, firstPocket, turn);
-            default    -> new Pocket(nextNr, firstPocket, turn);
-        };
-    }
+//    Pocket(int pocketNr, PocketTemplate firstPocket, Player turn) {
+//        super(pocketNr, turn, 4);
+//
+//        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn);
+//        setNextPocket(next);
+//    }
+//
+//    @Override
+//    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn) {
+//        return switch (nextNr) {
+//            case 7, 14 -> new MancalaPocket(nextNr, firstPocket, turn);
+//            default    -> new Pocket(nextNr, firstPocket, turn);
+//        };
+//    }
 
     // constructors voor maken van custom board [niet public; alleen voor testen]
     Pocket(List<Integer> initialStones) {
@@ -39,7 +46,9 @@ class Pocket extends PocketTemplate {
         PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn, initialStones);
         setNextPocket(next);
     }
-    private PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones) {
+
+    @Override
+    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones) {
         return switch (nextNr) {
             case 7, 14 -> new MancalaPocket(nextNr, firstPocket, turn, initialStones);
             default    -> new Pocket(nextNr, firstPocket, turn, initialStones);

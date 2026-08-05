@@ -1,7 +1,5 @@
 package nl.sogyo.mancala.client;
 
-import nl.sogyo.mancala.domain.exceptions.GameOver;
-
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -11,8 +9,7 @@ public class MancalaView {
 
     private Frame frame;
     private Label statusLabel;
-    private Panel buttonPanel;
-    private Label[] pocketLabels;
+    private Component[] boardComponents;
 
     public MancalaView(GameController controller) {
         this.controller = controller;
@@ -57,70 +54,119 @@ public class MancalaView {
 
         // Bord in het midden
         Panel boardPanel = new Panel(new BorderLayout(10, 10));
-        boardPanel.setBackground(Color.darkGray);
+        boardPanel.setBackground(Color.DARK_GRAY);
 
-        pocketLabels = new Label[14];
-        for (int i = 0; i < 14; i++) {
-            pocketLabels[i] = new Label("", Label.CENTER);
-            pocketLabels[i].setBackground(Color.white);
-        }
+        boardComponents = new Component[14];
 
-        pocketLabels[13].setPreferredSize(new Dimension(150, 0));
-        boardPanel.add(pocketLabels[13], BorderLayout.WEST);
-        pocketLabels[6].setPreferredSize(new Dimension(150, 0));
-        boardPanel.add(pocketLabels[6], BorderLayout.EAST);
+        // Kalaha's blijven vaste labels
+        Label kalaha14 = new Label("", Label.CENTER);
+        kalaha14.setBackground(Color.WHITE);
+        kalaha14.setPreferredSize(new Dimension(150, 0));
+        boardComponents[13] = kalaha14;
+        boardPanel.add(kalaha14, BorderLayout.WEST);
 
+        Label kalaha7 = new Label("", Label.CENTER);
+        kalaha7.setBackground(Color.WHITE);
+        kalaha7.setPreferredSize(new Dimension(150, 0));
+        boardComponents[6] = kalaha7;
+        boardPanel.add(kalaha7, BorderLayout.EAST);
+
+        // Speelbare vakjes worden knoppen op de rasterweergave
         Panel centerPockets = new Panel(new GridLayout(2, 6, 5, 5));
+
+        // Bovenste rij (Speler 2: Pockets 13 t/m 8)
         for (int i = 12; i >= 7; i--) {
-            centerPockets.add(pocketLabels[i]);
+            int pocketNr = i + 1;
+            Button pocketButton = new Button();
+            pocketButton.addActionListener(e -> handlePocketClick(pocketNr));
+            boardComponents[i] = pocketButton;
+            centerPockets.add(pocketButton);
         }
+
+        // Onderste rij (Speler 1: Pockets 1 t/m 6)
         for (int i = 0; i < 6; i++) {
-            centerPockets.add(pocketLabels[i]);
+            int pocketNr = i + 1;
+            Button pocketButton = new Button();
+            pocketButton.addActionListener(e -> handlePocketClick(pocketNr));
+            boardComponents[i] = pocketButton;
+            centerPockets.add(pocketButton);
         }
 
         boardPanel.add(centerPockets, BorderLayout.CENTER);
         frame.add(boardPanel, BorderLayout.CENTER);
 
-        // Knoppen onderaan
-        buttonPanel = new Panel(new GridLayout(1, 6, 10, 0));
-        buttonPanel.setBackground(Color.darkGray);
-
-        for (int i = 1; i <= 6; i++) {
-            int pocketNr = i;
-            Button button = new Button("Pocket " + pocketNr);
-            button.addActionListener(e -> handleButtonClick(pocketNr));
-            buttonPanel.add(button);
-        }
-        frame.add(buttonPanel, BorderLayout.SOUTH);
-
         frame.revalidate();
         frame.repaint();
     }
 
-    private void handleButtonClick(int pocketNr) {
-        String errorMessage = controller.makeMove(pocketNr);
+    private void handlePocketClick(int absolutePocketNr) {
+        // Converteer de absolute pocketindex (1-14) naar de relatieve keuze per speler (1-6)
+        int playerChoice = (absolutePocketNr > 7) ? absolutePocketNr - 7 : absolutePocketNr;
+
+        String errorMessage = controller.makeMove(playerChoice);
+
+        updateDisplay();
+
         if (errorMessage != null) {
             statusLabel.setText(errorMessage);
             return;
         }
 
-        updateDisplay();
-
         if (controller.isGameOver()) {
             int winner = controller.getWinner();
             statusLabel.setText("Game Over! The winner is: Player " + winner);
-            buttonPanel.setEnabled(false);
+            disableAllButtons();
         }
     }
 
     private void updateDisplay() {
         int[] stones = controller.getBoardStones();
+        boolean[] playable = controller.getPlayablePockets();
+        int currentTurn = controller.getCurrentTurn();
 
-        for (int i = 0; i < 14; i++) {
-            String name = (i == 6 || i == 13) ? "Kalaha " : "Pocket ";
-            pocketLabels[i].setText(name + (i + 1) + ": " + stones[i] + " stones");
+        // Update Kalaha's (indices 6 en 13)
+        ((Label) boardComponents[6]).setText("Kalaha 7: " + stones[6] + " stones");
+        ((Label) boardComponents[13]).setText("Kalaha 14: " + stones[13] + " stones");
+
+        // Update speelbare pockets
+        updatePocketView(0, stones, playable);
+
+        statusLabel.setText("Player " + currentTurn + "'s turn. Click a green pocket to make a move.");
+    }
+
+    private void updatePocketView(int index, int[] stones, boolean[] playable) {
+        if (index == 14) {
+            return;
         }
 
-        statusLabel.setText("Player " + controller.getCurrentTurn() + " is now, which pocket would you like to move?");
+        if (index != 6 && index != 13) {
+            Button btn = (Button) boardComponents[index];
+            btn.setLabel("Pocket " + (index + 1) + ": " + stones[index] + " stones");
+
+            boolean isPlayable = playable[index];
+            btn.setEnabled(isPlayable);
+
+            Color lightGreen = new Color(180, 240, 180);
+            Color lightRed = new Color(255, 180, 180);
+            btn.setBackground(isPlayable ? lightGreen : lightRed);
+        }
+
+        updatePocketView(index + 1, stones, playable);
+    }
+
+    private void disableAllButtons() {
+        disableButtonsRecursively(0);
+    }
+
+    private void disableButtonsRecursively(int index) {
+        if (index == 14) {
+            return;
+        }
+
+        if (index != 6 && index != 13) {
+            boardComponents[index].setEnabled(false);
+        }
+
+        disableButtonsRecursively(index + 1);
     }
 }
