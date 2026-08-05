@@ -4,9 +4,9 @@ import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 import java.util.List;
 
-public class Pocket extends PocketTemplate {
+class Pocket extends PocketTemplate {
 
-    public Pocket() {
+    Pocket() {
         super();
         PocketTemplate next = createNextPocket(2, this, getTurn());
         setNextPocket(next);
@@ -48,7 +48,7 @@ public class Pocket extends PocketTemplate {
 
     //
 
-    public void setMoveStones(int pocketNr) {
+    void setMoveStones(int pocketNr) {
         Pocket targetPocket = findPocket(pocketNr);
         determineIfGameIsOver();
         targetPocket.doMoveStones();

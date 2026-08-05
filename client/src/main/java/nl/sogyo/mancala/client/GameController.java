@@ -1,50 +1,50 @@
 package nl.sogyo.mancala.client;
 
-import nl.sogyo.mancala.domain.Pocket;
-import nl.sogyo.mancala.domain.PocketTemplate;
+import nl.sogyo.mancala.domain.Facade;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
-import nl.sogyo.mancala.domain.exceptions.GameOver;
 
 public class GameController {
-    private Pocket pocket;
+    private final Facade facade;
+
+    public GameController() {
+        this.facade = new Facade();
+    }
 
     public void startNewGame() {
-        this.pocket = new Pocket();
+        this.facade.startGame();
     }
 
     public int getCurrentTurn() {
-        return this.pocket.getWhoseTurnIsIt();
+        return this.facade.getCurrentTurn();
     }
 
-    public String makeMove(int playerPocketChoice) throws GameOver {
+    public String makeMove(int playerPocketChoice) {
         int actualPocket = playerPocketChoice;
         if (getCurrentTurn() == 2) {
             actualPocket += 7;
         }
 
         try {
-            this.pocket.setMoveStones(actualPocket);
+            this.facade.setMoveStones(actualPocket);
             return null;
         } catch (CanNotPlayThisPocket e) {
             return "Invalid move! Player " + getCurrentTurn() + ", please choose a different pocket.";
         }
     }
 
+    public boolean[] getPlayablePockets() {
+        return this.facade.getPlayablePockets();
+    }
+
+    public boolean isGameOver() {
+        return this.facade.isGameOver();
+    }
+
     public int getWinner() {
-        return this.pocket.getWhoIsTheWinner();
+        return this.facade.getWinner();
     }
 
     public int[] getBoardStones() {
-        int[] stones = new int[14];
-        if (this.pocket == null) return stones;
-
-        PocketTemplate current = this.pocket;
-        for (int i = 0; i < 14; i++) {
-            if (current != null) {
-                stones[i] = current.getStonesAmount();
-                current = current.getNextPocket();
-            }
-        }
-        return stones;
+        return this.facade.getBoardStones();
     }
 }

@@ -52,6 +52,11 @@ class MancalaPocket extends PocketTemplate  {
     }
 
     @Override
+    boolean isPlayable() {
+        return false;
+    }
+
+    @Override
     void receiveStones(int stonesPassedOn) {
         if (this.isTurnOfThisPlayer()) {
             depositStoneAndPass(stonesPassedOn);

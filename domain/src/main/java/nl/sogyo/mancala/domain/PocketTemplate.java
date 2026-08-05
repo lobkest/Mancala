@@ -5,7 +5,7 @@ import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
 import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
 
 
-public abstract class PocketTemplate {
+abstract class PocketTemplate {
     private final int pocketNr;
     private int stones;
     private PocketTemplate nextPocket;
@@ -27,7 +27,7 @@ public abstract class PocketTemplate {
         this.nextPocket = nextPocket;
     }
 
-    public PocketTemplate getNextPocket() {
+    PocketTemplate getNextPocket() {
         return this.nextPocket;
     }
 
@@ -84,12 +84,12 @@ public abstract class PocketTemplate {
     private void gameFinished() {
         clearAllSideStonesToMancalas();
         this.turn.setGameOver();
-        throw new GameOver();
+//        throw new GameOver();
     }
 
     abstract void clearAllSideStonesToMancalas();
 
-    public int getWhoIsTheWinner(){
+    int getWhoIsTheWinner(){
         PocketTemplate PlayerOne = getPocketFinder(1);
         PocketTemplate PlayerTwo = getPocketFinder(8);
         int scorePlayerOne = PlayerOne.getWhatIsTheScore();
@@ -106,7 +106,7 @@ public abstract class PocketTemplate {
         this.stones = amount;
     }
 
-    public int getStonesAmount(){
+    int getStonesAmount(){
         return this.stones;
     }
 
@@ -119,7 +119,7 @@ public abstract class PocketTemplate {
     }
 
     // just for client for now
-    public int getWhoseTurnIsIt(){
+    int getWhoseTurnIsIt(){
         return this.isTurnOfThisPlayer() ? 1 : 2;
     }
 
@@ -133,6 +133,26 @@ public abstract class PocketTemplate {
 
     void setAddStones(int amount){
         this.stones += amount;
+    }
+
+//    boolean isGameOver() {
+//        return !this.turn.isTurnOfThisPlayer() && !this.getNextPocket().getTurn().isTurnOfThisPlayer();
+//    }
+
+    boolean isPlayable() {
+        return this.isTurnOfThisPlayer() && this.getStonesAmount() > 0;
+    }
+
+    boolean hasPlayableMoves() {
+        return hasPlayableMoves(this);
+    }
+
+    private boolean hasPlayableMoves(PocketTemplate startPocket) {
+        return this.isPlayable() || (this.getNextPocket() != startPocket && this.getNextPocket().hasPlayableMoves(startPocket));
+    }
+
+    boolean isGameOver() {
+        return !hasPlayableMoves();
     }
 
     PocketTemplate stepForward(int steps) {

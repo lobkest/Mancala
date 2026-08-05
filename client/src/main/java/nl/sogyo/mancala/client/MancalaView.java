@@ -98,18 +98,17 @@ public class MancalaView {
     }
 
     private void handleButtonClick(int pocketNr) {
-        try {
-            String errorMessage = controller.makeMove(pocketNr);
-            if (errorMessage != null) {
-                statusLabel.setText(errorMessage);
-                return;
-            }
-            updateDisplay();
+        String errorMessage = controller.makeMove(pocketNr);
+        if (errorMessage != null) {
+            statusLabel.setText(errorMessage);
+            return;
+        }
 
-        } catch (GameOver e) {
-            updateDisplay();
+        updateDisplay();
+
+        if (controller.isGameOver()) {
             int winner = controller.getWinner();
-            statusLabel.setText(e.getMessage() + " The winner is: " + winner);
+            statusLabel.setText("Game Over! The winner is: Player " + winner);
             buttonPanel.setEnabled(false);
         }
     }
