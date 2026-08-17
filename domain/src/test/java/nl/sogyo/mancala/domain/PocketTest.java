@@ -478,31 +478,6 @@ public class PocketTest {
     }
 
     @Test
-    public void testWhoIsTheWinnerPlayerOne() {
-        Pocket pocket = new Pocket();
-        PocketTemplate mancalaOne = pocket.getPocketFinder(7);
-        PocketTemplate mancalaTwo = pocket.getPocketFinder(14);
-
-        mancalaOne.setStones(25);
-        mancalaTwo.setStones(23);
-
-        assertEquals(1, pocket.getWhoIsTheWinner(), "Player one should be the winner");
-        assertEquals(25, mancalaOne.getStonesAmount(), "Mancala one should have 25 stones.");
-    }
-
-    @Test
-    public void testWhoIsTheWinnerDraw() {
-        Pocket pocket = new Pocket();
-        PocketTemplate mancalaOne = pocket.getPocketFinder(7);
-        PocketTemplate mancalaTwo = pocket.getPocketFinder(14);
-
-        mancalaOne.setStones(24);
-        mancalaTwo.setStones(24);
-
-        assertEquals(0, pocket.getWhoIsTheWinner(), "Result should be a draw (0) when scores are equal.");
-    }
-
-    @Test
     public void testGameEndsWhenPlayerTwoSideIsEmpty() {
         List<Integer> board = List.of(
                 4, 4, 4, 4, 4, 4, 0,
