@@ -10,7 +10,6 @@ public class GameController {
     private static final int PLAYER_1_CHECK_POCKET = 1;
     private static final int PLAYER_2_CHECK_POCKET = 8;
 
-
     public GameController() {
         this.facade = new Facade();
     }
@@ -25,7 +24,6 @@ public class GameController {
         return 0; // Game over of geen spel gestart
     }
 
-
     public void startNewGame() {
         this.facade.startGame();
     }
@@ -35,7 +33,6 @@ public class GameController {
         if (getCurrentTurn() == 2) {
             actualPocket += 7;
         }
-
         try {
             this.facade.setMoveStones(actualPocket);
             return null;

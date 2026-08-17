@@ -25,7 +25,6 @@ abstract class PocketTemplate {
         return this.nextPocket;
     }
 
-
     abstract PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones);
 
     PocketTemplate getPocketFinder(int i) {
@@ -84,11 +83,22 @@ abstract class PocketTemplate {
     abstract void clearAllSideStonesToMancalas();
 
     int getWhoIsTheWinner(){
+        if (isGameOver()) {
+            PocketTemplate PlayerOne = getPocketFinder(1);
+            PocketTemplate PlayerTwo = getPocketFinder(8);
+            int scorePlayerOne = PlayerOne.calculateScore();
+            int scorePlayerTwo = PlayerTwo.calculateScore();
+            return (scorePlayerOne > scorePlayerTwo) ? 1 : (scorePlayerTwo > scorePlayerOne) ? 2 : 0;
+            }
+        return -1;
+    }
+
+    int getWhosePlayersTurn(){
         PocketTemplate PlayerOne = getPocketFinder(1);
         PocketTemplate PlayerTwo = getPocketFinder(8);
-        int scorePlayerOne = PlayerOne.calculateScore();
-        int scorePlayerTwo = PlayerTwo.calculateScore();
-        return (scorePlayerOne > scorePlayerTwo) ? 1 : (scorePlayerTwo > scorePlayerOne) ? 2 : 0;
+        boolean isTurnPlayerOne = PlayerOne.isTurnOfThisPlayer();
+        boolean isTurnPlayerTwo = PlayerTwo.isTurnOfThisPlayer();
+        return (isTurnPlayerOne) ? 1 : (isTurnPlayerTwo) ? 2 : 0;
     }
 
     private int calculateScore(){

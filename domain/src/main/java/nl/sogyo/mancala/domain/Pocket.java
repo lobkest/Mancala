@@ -8,7 +8,7 @@ class Pocket extends PocketTemplate {
 
     Pocket() {
         this(List.of(
-                4, 4, 4, 4, 4, 4, 0,
+                5, 4, 4, 4, 4, 4, 0,
                 4, 4, 4, 4, 4, 4, 0
         ));
     }
