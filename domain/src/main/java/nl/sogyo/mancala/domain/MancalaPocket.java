@@ -1,60 +1,71 @@
-
 package nl.sogyo.mancala.domain;
 
-import nl.sogyo.mancala.domain.exceptions.OngeldigBordException;
-import nl.sogyo.mancala.domain.exceptions.CanNotPlayThisPocket;
+import java.util.List;
 
-public class MancalaPocket extends PocketAbstract  {
+class MancalaPocket extends PocketTemplate  {
 
-    protected MancalaPocket(int pocketNr, PocketAbstract firstPocket, Beurt beurt, int owner) {
-        super(pocketNr, beurt, owner);
-        this.stones = 0;
-        this.nextPocket = createNextPocket(pocketNr + 1, firstPocket, beurt, owner);
+    MancalaPocket(int pocketNr, PocketTemplate firstPocket, Player turn, List<Integer> initialStones) {
+        super(pocketNr, turn, initialStones.get(pocketNr - 1));
+
+        PocketTemplate next = createNextPocket(pocketNr + 1, firstPocket, turn, initialStones);
+        setNextPocket(next);
     }
 
     @Override
-    protected PocketAbstract createNextPocket(int nextNr, PocketAbstract firstPocket, Beurt beurt, int owner){
-        owner = owner+1; // of =2
-        return switch (nextNr) {
-            case 15 -> firstPocket;
-            default -> new Pocket(nextNr, firstPocket, beurt, owner);
-        };
+    PocketTemplate createNextPocket(int nextNr, PocketTemplate firstPocket, Player turnOne, List<Integer> initialStones) {
+        if (nextNr == 15) {
+            return firstPocket;
+        }
+        Player turnTwo = new Player(turnOne);
+        turnOne.giveTurnTwo(turnTwo);
+        return new Pocket(nextNr, firstPocket, turnTwo, initialStones);
     }
 
     @Override
-    public void setMoveStones() {
-        throw new CanNotPlayThisPocket();
-    }
-
-    @Override
-    protected void passRemainingStones(int remainingStones) {
+    void passRemainingStones(int remainingStones) {
         if (remainingStones > 0) {
-            this.nextPocket.receiveStones(remainingStones);
+            this.getNextPocket().receiveStones(remainingStones);
+        }else {
+            determineIfGameIsOver();
         }
     }
 
     @Override
-    protected void receiveStones(int stonesPassedOn) {
-        if (this.beurt.isTurnOf(this.owner)) {
+    boolean isPlayable() {
+        return false;
+    }
+
+    @Override
+    void receiveStones(int stonesPassedOn) {
+        if (this.isTurnOfThisPlayer()) {
             depositStoneAndPass(stonesPassedOn);
         } else {
-            this.nextPocket.receiveStones(stonesPassedOn); // Sla tegenstanders Mancala over
+            this.getNextPocket().receiveStones(stonesPassedOn);
         }
     }
 
-    // In MancalaPocket.java:
     @Override
-    protected PocketAbstract findNeighborPocket(int pocketNr) {
-        throw new OngeldigBordException();
+    boolean isEmptyForGameEnd() {
+        return true;
     }
 
     @Override
-    protected int getSideStonesCount() {
-        return 0; // Mancala pockets do not count as standard side pockets
+    void clearAllSideStonesToMancalas() {
+        if (this.getNextPocket().getPocketNr() == 1) {
+            return;
+        }
+        this.getNextPocket().clearAllSideStonesToMancalas();
     }
 
     @Override
-    protected int clearSideStones() {
-        return 0; // Mancala pocket stores points; it is not cleared
+    protected PocketTemplate countStepsToMancala(int steps) {
+        return this.stepForward(steps);
     }
+
+    @Override
+    PocketTemplate findMyMancala() {
+        return this;
+    }
+
+
 }
